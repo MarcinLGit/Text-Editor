@@ -7,16 +7,20 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+
+    left_saved = true;
     connect(ui->actionOpen, &QAction::triggered,this, &MainWindow::openFile);
     connect(ui->actionSave, &QAction::triggered,this, &MainWindow::saveFile);
     connect(ui->actionSaveAs, &QAction::triggered,this, &MainWindow::saveFileAs);
 
-    connect(ui->actionOpenRight, &QAction::triggered,this, &MainWindow::openFile);
-    connect(ui->actionSaveRight, &QAction::triggered,this, &MainWindow::saveFile);
-    connect(ui->actionSaveAsRight, &QAction::triggered,this, &MainWindow::saveFileAs);
+
+    right_saved = true;
+    connect(ui->actionOpenRight, &QAction::triggered,this, &MainWindow::openFileRight);
+    connect(ui->actionSaveRight, &QAction::triggered,this, &MainWindow::saveFileRight);
+    connect(ui->actionSaveAsRight, &QAction::triggered,this, &MainWindow::saveFileAsRight);
 
     //newFile();
-    isSaved = true;
+    //isSaved = true;
 }
 
 MainWindow::~MainWindow()
@@ -24,15 +28,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::newFile(QPlainTextEdit *editor)
+void MainWindow::newFile()
 {
-    ui->editor->clear();
+    ui->plainTextEdit->clear();
     filename.clear();
-    isSaved = false;
     ui->statusbar->showMessage("New File");
 }
 
-void MainWindow::openFile(QPlainTextEdit *editor)
+void MainWindow::openFile()
 {
     QString temp = QFileDialog::getOpenFileName(this,"Open File",QString(),"Text Files (*txt);;All Files (*,*)");
 
@@ -48,19 +51,18 @@ void MainWindow::openFile(QPlainTextEdit *editor)
     }
 
     QTextStream stream(&file);
-    ui->editor->setPlainText(stream.readAll());
+    ui->plainTextEdit->setPlainText(stream.readAll());
     file.close();
 
-    isSaved = true;
+    left_saved = true;
     ui->statusbar->showMessage(filename);
 }
 
-void MainWindow::saveFile(QPlainTextEdit *editor)
+void MainWindow::saveFile()
 {
     if(filename.isEmpty())
     {
         saveFileAs();
-        return;
     }
 
     QFile file(filename);
@@ -71,18 +73,79 @@ void MainWindow::saveFile(QPlainTextEdit *editor)
     }
 
     QTextStream stream(&file);
-    stream << ui->editor->toPlainText();
+    stream << ui->plainTextEdit->toPlainText();
     file.close();
 
-    isSaved = true;
+    left_saved = true;
     ui->statusbar->showMessage(filename);
 }
 
-void MainWindow::saveFileAs(QPlainTextEdit *editor)
+void MainWindow::saveFileAs()
 {
     QString temp = QFileDialog::getSaveFileName(this,"Save File",QString());
     if(temp.isEmpty()) return;
-    filename = temp;
+
     saveFile();
+}
+
+void MainWindow::newFileRight()
+{
+    ui->plainTextEditRight->clear();
+    right_filename.clear();
+    ui->statusbar->showMessage("New File");
+    right_saved = false;
+}
+
+void MainWindow::openFileRight()
+{
+    QString temp = QFileDialog::getOpenFileName(this,"Open File",QString(),"Text Files (*txt);;All Files (*,*)");
+
+    if(temp.isEmpty()) return;
+
+    right_filename = temp;
+    QFile file(right_filename);
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        newFile();
+        QMessageBox::critical(this,"Error", file.errorString());
+        return;
+    }
+
+    QTextStream stream(&file);
+    ui->plainTextEditRight->setPlainText(stream.readAll());
+    file.close();
+
+    right_saved = true;
+    ui->statusbar->showMessage(filename);
+}
+
+void MainWindow::saveFileRight()
+{
+    if(right_filename.isEmpty())
+    {
+        saveFileAs();
+    }
+
+    QFile file(right_filename);
+    if(!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::critical(this,"Error", file.errorString());
+        return;
+    }
+
+    QTextStream stream(&file);
+    stream << ui->plainTextEditRight->toPlainText();
+    file.close();
+
+    right_saved = true;
+    ui->statusbar->showMessage(right_filename);
+}
+
+void MainWindow::saveFileAsRight()
+{
+    QString temp = QFileDialog::getSaveFileName(this,"Save File",QString());
+    if(temp.isEmpty()) return;
+
+    saveFileRight();
 }
 

@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QPlainTextEdit>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,17 +20,24 @@ public:
     ~MainWindow();
 
 private slots:
-    void newFile(QPlainTextEdit *editor);
-    void openFile(QPlainTextEdit *editor);
-    void saveFile(QPlainTextEdit *editor);
-    void saveFileAs(QPlainTextEdit *editor);
+    void newFile();
+    void openFile();
+    void saveFile();
+    void saveFileAs();
+
+    void newFileRight();
+    void openFileRight();
+    void saveFileRight();
+    void saveFileAsRight();
+
 
 private:
     Ui::MainWindow *ui;
 
     QString filename;
-    bool isSaved;
+    bool left_saved;
 
+    QString right_filename;
     bool right_saved;
 };
 #endif // MAINWINDOW_H
