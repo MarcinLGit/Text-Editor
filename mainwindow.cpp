@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
+#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,18 +9,22 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     left_saved = true;
-    connect(ui->actionOpen, &QAction::triggered,this, &MainWindow::openFile);
-    connect(ui->actionSave, &QAction::triggered,this, &MainWindow::saveFile);
-    connect(ui->actionSaveAs, &QAction::triggered,this, &MainWindow::saveFileAs);
-
+    connect(ui->actionOpenLeft, &QAction::triggered,this, &MainWindow::openFileLeft);
+    connect(ui->actionSaveLeft, &QAction::triggered,this, &MainWindow::saveFileLeft);
+    connect(ui->actionSaveAsLeft, &QAction::triggered,this, &MainWindow::saveFileAsLeft);
+   // connect(ui->actionExit, &QAction::triggered,this, &MainWindow::close);
 
     right_saved = true;
     connect(ui->actionOpenRight, &QAction::triggered,this, &MainWindow::openFileRight);
     connect(ui->actionSaveRight, &QAction::triggered,this, &MainWindow::saveFileRight);
     connect(ui->actionSaveAsRight, &QAction::triggered,this, &MainWindow::saveFileAsRight);
 
-    //newFile();
-    //isSaved = true;
+
+
+    newFileLeft();
+    left_saved = true;
+    newFileRight();
+    right_saved = false;
 }
 
 MainWindow::~MainWindow()
@@ -28,14 +32,15 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::newFile()
+void MainWindow::newFileLeft()
 {
     ui->plainTextEdit->clear();
     filename.clear();
+    left_saved = false;
     ui->statusbar->showMessage("New File");
 }
 
-void MainWindow::openFile()
+void MainWindow::openFileLeft()
 {
     QString temp = QFileDialog::getOpenFileName(this,"Open File",QString(),"Text Files (*txt);;All Files (*,*)");
 
@@ -45,7 +50,7 @@ void MainWindow::openFile()
     QFile file(filename);
     if(!file.open(QIODevice::ReadOnly))
     {
-        newFile();
+        newFileLeft();
         QMessageBox::critical(this,"Error", file.errorString());
         return;
     }
@@ -58,11 +63,12 @@ void MainWindow::openFile()
     ui->statusbar->showMessage(filename);
 }
 
-void MainWindow::saveFile()
+void MainWindow::saveFileLeft()
 {
     if(filename.isEmpty())
     {
-        saveFileAs();
+        saveFileAsLeft();
+        return;
     }
 
     QFile file(filename);
@@ -80,20 +86,20 @@ void MainWindow::saveFile()
     ui->statusbar->showMessage(filename);
 }
 
-void MainWindow::saveFileAs()
+void MainWindow::saveFileAsLeft()
 {
     QString temp = QFileDialog::getSaveFileName(this,"Save File",QString());
     if(temp.isEmpty()) return;
-
-    saveFile();
+    filename = temp;
+    saveFileLeft();
 }
 
 void MainWindow::newFileRight()
 {
     ui->plainTextEditRight->clear();
     right_filename.clear();
-    ui->statusbar->showMessage("New File");
     right_saved = false;
+    ui->statusbar->showMessage("New File");
 }
 
 void MainWindow::openFileRight()
@@ -106,7 +112,7 @@ void MainWindow::openFileRight()
     QFile file(right_filename);
     if(!file.open(QIODevice::ReadOnly))
     {
-        newFile();
+        newFileLeft();
         QMessageBox::critical(this,"Error", file.errorString());
         return;
     }
@@ -116,14 +122,14 @@ void MainWindow::openFileRight()
     file.close();
 
     right_saved = true;
-    ui->statusbar->showMessage(filename);
+    ui->statusbar->showMessage(right_filename);
 }
 
 void MainWindow::saveFileRight()
 {
     if(right_filename.isEmpty())
     {
-        saveFileAs();
+        saveFileAsRight();
     }
 
     QFile file(right_filename);
@@ -145,7 +151,7 @@ void MainWindow::saveFileAsRight()
 {
     QString temp = QFileDialog::getSaveFileName(this,"Save File",QString());
     if(temp.isEmpty()) return;
-
+    right_filename = temp;
     saveFileRight();
 }
 

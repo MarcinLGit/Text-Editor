@@ -20,10 +20,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void newFile();
-    void openFile();
-    void saveFile();
-    void saveFileAs();
+    void newFileLeft();
+    void openFileLeft();
+    void saveFileLeft();
+    void saveFileAsLeft();
 
     void newFileRight();
     void openFileRight();
