@@ -12,4 +12,4 @@ Ponadto wykonaliśmy przykładowe testy jednostkowe.
 
 
 ## Podgląd aplikacji
-![](readme_files/podglad.png)
+![](readme_files/Podglad.png)
