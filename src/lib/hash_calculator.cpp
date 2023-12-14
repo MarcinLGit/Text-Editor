@@ -22,8 +22,9 @@ std::string HashCalculator::calculateStringHash(const std::string& input) {
     return ss.str();
 }
 
+// ta metoda jest potrzebna dla porownywania plikow w calosci
 std::string HashCalculator::readFileToString(const std::string& filePath) {
-    std::ifstream file(filePath);
+    std::ifstream file(filePath, std::ios::binary);
 
     if (!file.is_open()) {
         std::cerr << "Unable to open file: " << filePath << std::endl;
@@ -35,4 +36,4 @@ std::string HashCalculator::readFileToString(const std::string& filePath) {
     file.close();
 
     return buffer.str();
-};
+}

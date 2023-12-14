@@ -13,6 +13,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 include(Docs)
 
+set(LIBRARY_NAME Library)
+
 add_subdirectory(src)
 add_subdirectory(tests)
 

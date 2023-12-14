@@ -9,13 +9,6 @@
 #include <mutex>
 
 
-//struct HashResult {
-//  std::string hash;
- //   std::vector<int> lineNumbers;
-//};
-
-
-
 bool fileExists(const std::string& filePath) {
     std::ifstream file(filePath);
      return file.good();
@@ -78,47 +71,4 @@ std::pair<std::unordered_map<std::string, std::vector<int>>, int> countHashesAdd
 
     
     return {resultMap, lineNumber - 1};
-}
-
-    
-
-int main() {
-    std::unordered_map<std::string, std::vector<int>> resultMap1, resultMap2;
-    int lineNumber1, lineNumber2;
-    std::string filePath1 = "file1.txt";
-    std::string filePath2 = "file2.txt";
-
-    std::thread thread1([&resultMap1, &lineNumber1, filePath1]() {
-        std::tie(resultMap1, lineNumber1) = countHashesAddToHashMaps(filePath1);
-    });
-
-    std::thread thread2([&resultMap2, &lineNumber2, filePath2]() {
-        std::tie(resultMap2, lineNumber2) = countHashesAddToHashMaps(filePath2);
-    });
-
-    thread1.join();
-    thread2.join();
-
-    //wyniki
-    std::cout << "Thread 1 wynik:\n";
-    for (const auto& entry : resultMap1) {
-        std::cout << "Klucz: " << entry.first << ", Znaczenie: ";
-        for (const auto& value : entry.second) {
-            std::cout << value << " ";
-        }
-        std::cout << "\n";
-    }
-    std::cout << "ilosc linijek 1: " << lineNumber1 << "\n";
-
-    std::cout << "\n Thread 2 wynik:\n";
-    for (const auto& entry : resultMap2) {
-        std::cout << "Klucz: " << entry.first << ", Znaczenie: ";
-        for (const auto& value : entry.second) {
-            std::cout << value << " ";
-        }
-        std::cout << "\n";
-    }
-    std::cout << " ilosc linijek 2: " << lineNumber2 << "\n";
-
-    return 0;
 }
