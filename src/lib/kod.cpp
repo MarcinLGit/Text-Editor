@@ -3,7 +3,7 @@
 #include <openssl/sha.h>
 #include <iomanip>
 #include <chrono>
-#include "hash.h"
+#include "hash_calculator.h"
  
 std::string calculateStringHash(const std::string& input) {
     SHA256_CTX sha256;

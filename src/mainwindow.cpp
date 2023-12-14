@@ -1,5 +1,12 @@
+/**
+ * @file mainwindow.h
+ *
+ * @author Marcin Łobacz 
+ */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionOpenLeft, &QAction::triggered,this, &MainWindow::openFileLeft);
     connect(ui->actionSaveLeft, &QAction::triggered,this, &MainWindow::saveFileLeft);
     connect(ui->actionSaveAsLeft, &QAction::triggered,this, &MainWindow::saveFileAsLeft);
-   // connect(ui->actionExit, &QAction::triggered,this, &MainWindow::close);
 
     right_saved = true;
     connect(ui->actionOpenRight, &QAction::triggered,this, &MainWindow::openFileRight);
