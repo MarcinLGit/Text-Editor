@@ -18,7 +18,7 @@ Ponadto wykonaliśmy przykładowe testy jednostkowe.
 
 Do budowania potrzebny jest cmake, doxygen, openssl, qt6.
 
-Mając świeżą instalację Ubuntu 22.04 musimy wykonać komendę:\\
+Mając świeżą instalację Ubuntu 22.04 musimy wykonać komendę: <br>
     - sudo apt-get install qt6-base-dev libgl1-mesa-dev libboost-test-dev doxygen libssl-dev  g++ cmake
 
 ### Kompilacja
