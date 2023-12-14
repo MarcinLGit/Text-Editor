@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/MyTests.dir/test.cpp.o -o MyTests  /usr/lib/x86_64-linux-gnu/libboost_unit_test_framework.so.1.74.0 
