@@ -27,9 +27,9 @@ Mając świeżą instalację Ubuntu 22.04 musimy wykonać komendę: <br>
 mkdir build && cd build
 cmake ..
 make
-make docs <- tworzenie dokumentacji
+make docs
 ```
-Dokumentacja po kompilacji znajduje się w folerze docs.
+Dokumentacja po kompilacji znajduje się w folderze docs.
 
 ### Uruchomienie
 Aplikacja - ```cd src && ./ZPR```
