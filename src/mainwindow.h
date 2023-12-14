@@ -33,38 +33,15 @@ public:
 private slots:
 
 
-    /**
-     * @brief Usuwa tekst z lewego dytora
-     */
+    
     void newFileLeft();
-    /**
-     * @brief Otwiera nowy plik, wczytuje plik do lewego edytora
-     */
     void openFileLeft();
-    /**
-     * @brief Zapisuje modyfikacje pliku.
-     */
     void saveFileLeft();
-    /**
-     * @brief Zapisywanie tesktu lewego edytora do pliku
-     */
     void saveFileAsLeft();
 
-    /**
-     * @brief Usuwa tekst z lewego dytora
-     */
     void newFileRight();
-    /**
-     * @brief Otwiera nowy plik, wczytuje plik do lewego edytora
-     */
     void openFileRight();
-     /**
-     * @brief Zapisuje modyfikacje pliku.
-     */
     void saveFileRight();
-    /**
-     * @brief Zapisywanie tesktu prawego edytora do pliku
-     */
     void saveFileAsRight();
 
 
