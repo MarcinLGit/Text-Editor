@@ -1,6 +1,6 @@
 # Autorzy
 - Marcin Łobacz
-- Aleksandr Rahacheusk
+- Aleksandr Rahacheuski
 
 # ZPR - Porównywanie plików tekstowych
 
