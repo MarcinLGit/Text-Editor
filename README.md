@@ -31,3 +31,6 @@ make docs <- tworzenie dokumentacji
 ```
 Dokumentacja po kompilacji znajduje się w folerze docs.
 
+### Uruchomienie
+Aplikacja - ```cd src && ./ZPR```
+Test jednostkowe - ```cd tests && ./MyTests```
