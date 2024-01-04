@@ -30,3 +30,25 @@ int main() {
     std::cout << "Levenshtein Distance: " << levenshteinDistance(str1, str2) << std::endl;
     return 0;
 }
+
+
+double levenshteinPercentage(const std::string &s1, const std::string &s2) {
+    int distance = levenshteinDistance(s1, s2);
+    int maxLength = std::max(s1.length(), s2.length());
+    
+    //nie dzielić na zero
+    if (maxLength == 0) return 0.0; 
+
+    return 100.0 * distance / maxLength;
+}
+
+int main1() {
+    std::string str1 = "example";
+    std::string str2 = "samples";
+
+    std::cout << "Levenshtein Distance: " << levenshteinDistance(str1, str2) << std::endl;
+    std::cout << "Percentage: " << levenshteinPercentage(str1, str2) << "%" << std::endl;
+
+    return 0;
+}
+
