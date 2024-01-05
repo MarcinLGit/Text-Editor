@@ -59,6 +59,36 @@ std::pair<std::vector<std::string>, std::vector<std::string>> read_files(const s
 }
 
 
+std::unordered_map<int, std::string> compare(const std::vector<std::string>& vec1, const std::vector<std::string>& vec2) {
+    std::unordered_map<int, std::string> differences_1;
+    std::unordered_map<int, std::string> differences_2;
+    std::unordered_map<int, std::pair<int, int>> differences;
+    int counter = 0;
+
+        //porównanie
+       for (size_t i = 0; i < minSize; i++) {
+        if (array1[i] != array2[i]) {
+            differences[i] = {array1[i], array2[i]};
+        }
+    }
+
+    // reszta
+    for (size_t i = minSize; i < array1.size(); i++) {
+        differences[i] = {array1[i], -1}; // dla przykładu
+    }
+    for (size_t i = minSize; i < array2.size(); i++) {
+        differences[i] = {-1, array2[i]}; // dla przykładu
+    }
+
+    // printowanie różnic
+    for (const auto& pair : differences) {
+        std::cout << "Index: " << pair.first << ", Values: " << pair.second.first << ", " << pair.second.second << std::endl;
+    }
+
+    
+
+}
+
 
 
 
