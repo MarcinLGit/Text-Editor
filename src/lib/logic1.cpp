@@ -107,6 +107,12 @@ findSubstring(const std::string& lcs, const std::unordered_map<int, std::string>
 }
 
 
+void threadFunction(const std::string& lcs, const std::unordered_map<int, std::string>& mapa, 
+                    std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>>& result) {
+    result = findSubstring(lcs, mapa);
+}
+
+
 std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> 
 findDelAdd(const std::unordered_map<int, std::pair<std::string, std::string>>& differences) {
 
@@ -123,7 +129,7 @@ findDelAdd(const std::unordered_map<int, std::pair<std::string, std::string>>& d
         second_file_differences+=diff.second.second;
     }
 
-    std::vector<char> lcs = LCS::fill_dyn_matrix(x, y);
+    std::vector<char> lcs = LCS::fill_dyn_matrix(x, y); // tutaj coś jest źle
     string lcss(lcs.begin(), lcs.end()); 
     std::cout<<lcss<<endl;
 
@@ -177,6 +183,18 @@ int main() {
         std::terminate();
     }
     auto [lines_file1, lines_file2] = read_files("file1.txt", "file2.txt");
+
+
+//compare i dodać  lcs
+
+    std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result1;
+    std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result2;
+
+    std::thread thread1(threadFunction, lcs, std::ref(mapa1), std::ref(result1));
+    std::thread thread2(threadFunction, lcs, std::ref(mapa2), std::ref(result2));
+
+    thread1.join();
+    thread2.join();
 
    
 
