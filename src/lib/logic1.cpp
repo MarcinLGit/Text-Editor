@@ -12,7 +12,8 @@
 
 
 HashCalculator hasher;
-LCS_H
+LCS lcs;
+Leven leven;
 
 CONST 
 bool fileExists(const std::string& filePath) {
@@ -60,8 +61,7 @@ std::pair<std::vector<std::string>, std::vector<std::string>> read_files(const s
 
 
 std::unordered_map<int, std::string> compare(const std::vector<std::string>& vec1, const std::vector<std::string>& vec2) {
-    std::unordered_map<int, std::string> differences_1;
-    std::unordered_map<int, std::string> differences_2;
+   
     std::unordered_map<int, std::pair<std::string, std::string>> differences; //bez sensu robić templatowy
     int counter = 0;
 
@@ -78,36 +78,67 @@ std::unordered_map<int, std::string> compare(const std::vector<std::string>& vec
 
     // dodawanie resztek
     for (size_t i = minSize; i < array1.size(); i++) {
-        differences[i] = {array1[i], ""}; // Пустая строка для обозначения отсутствия элемента
+        differences[i] = {array1[i], ""}; 
     }
     for (size_t i = minSize; i < array2.size(); i++) {
-        differences[i] = {"", array2[i]}; // Пустая строка для обозначения отсутствия элемента
+        differences[i] = {"", array2[i]}; 
+    }
+return differences;
+
+}
+
+
+std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> 
+findSubstring(const std::string& lcs, const std::unordered_map<int, std::string>& mapa) {
+    std::unordered_map<int, std::string> foundSubstrings;
+    std::unordered_map<int, std::string> notFoundSubstrings;
+
+    for (const auto& pair : mapa) {
+        if (lcs.find(pair.second) != std::string::npos) {
+            // jeśli to substring
+            foundSubstrings.insert(pair);
+        } else {
+            // jeśli to nie substring
+            notFoundSubstrings.insert(pair);
+        }
     }
 
-    // printowanie
-    for (const auto& pair : differences) {
-        std::cout << "Index: " << pair.first << ", Values: " << pair.second.first << ", " << pair.second.second << std::endl;
+    return {foundSubstrings, notFoundSubstrings};
+}
+
+
+std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> 
+findDelAdd(const std::unordered_map<int, std::pair<std::string, std::string>>& differences) {
+
+    std::string first_file_differences;
+    std::string second_file_differences;
+
+    std::unordered_map<int, std::string> firstElements;
+    std::unordered_map<int, std::string> secondElements;
+
+    for (const auto& diff : differences) {
+        firstElements[diff.first] = diff.second.first;
+        first_file_differences+=diff.second.first;
+        secondElements[diff.first] = diff.second.second;
+        second_file_differences+=diff.second.second;
     }
+
+    std::vector<char> lcs = LCS::fill_dyn_matrix(x, y);
+    string lcss(lcs.begin(), lcs.end()); 
+    std::cout<<lcss<<endl;
+
+
+    return {firstElements, secondElements};
+}
+
 
 
     
-
-}
-
-
+    
+    
 
 
-int main() {
 
-    if (fileExists !=true){
-        std::terminate();
-    }
-    auto [lines_file1, lines_file2] = read_files("file1.txt", "file2.txt");
-
-   
-
-    return 0;
-}
 
 
 std::pair<std::unordered_map<std::string, std::vector<int>>, int> countHashesAddToHashMaps() {
@@ -134,4 +165,20 @@ std::pair<std::unordered_map<std::string, std::vector<int>>, int> countHashesAdd
 
     
     return {resultMap, lineNumber - 1};
+}
+
+
+
+
+int main() {
+
+    if (fileExists !=true){
+       std::cout<"terminate"<endl
+        std::terminate();
+    }
+    auto [lines_file1, lines_file2] = read_files("file1.txt", "file2.txt");
+
+   
+
+    return 0;
 }
