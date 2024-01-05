@@ -15,14 +15,14 @@ HashCalculator hasher;
 LCS lcs;
 Leven leven;
 
-CONST 
+//sprawdzenie czy plik istnieje
 bool fileExists(const std::string& filePath) {
     std::ifstream file(filePath);
      return file.good();
 }
 
-
-bool files_exist(const std::vector<std::string>& lines_file1, const std::vector<std::string>& lines_file2) {
+//sprawdzenie czy 2 pliki istnieją
+bool files_exist(const std::vector<std::string>& lines_file1, const std::vector<std::string>& lines_file2) {  //++
    
     
     bool first_file_exist = fileExists(firstFilePath); //podwojne sprawdzanie na itnienie pliku wykorzystuje metode z hash_calculator
@@ -36,8 +36,8 @@ bool files_exist(const std::vector<std::string>& lines_file1, const std::vector<
     return true;
 }
 
-
-void read_file(const std::string& file_name, std::vector<std::string>& lines) {
+//wczytywanie plików
+void read_file(const std::string& file_name, std::vector<std::string>& lines) { //++
     std::ifstream file(file_name);
     std::string line;
     while (std::getline(file, line)) {
@@ -45,7 +45,7 @@ void read_file(const std::string& file_name, std::vector<std::string>& lines) {
     }
 }
 
-std::pair<std::vector<std::string>, std::vector<std::string>> read_files(const std::string& file1, const std::string& file2) {
+std::pair<std::vector<std::string>, std::vector<std::string>> read_files(const std::string& file1, const std::string& file2) { //++
     std::vector<std::string> lines_file1, lines_file2;
 
     // tworzenie wątków
@@ -59,37 +59,36 @@ std::pair<std::vector<std::string>, std::vector<std::string>> read_files(const s
     return {lines_file1, lines_file2};
 }
 
-
-std::unordered_map<int, std::string> compare(const std::vector<std::string>& vec1, const std::vector<std::string>& vec2) {
-   
-    std::unordered_map<int, std::pair<std::string, std::string>> differences; //bez sensu robić templatowy
-    int counter = 0;
-
+//porównuje i zwraca  hashmap z numerem linijki i zawartoscą plików
+std::unordered_map<int, std::pair<std::string, std::string>> 
+compare(const std::vector<std::string>& vec1, const std::vector<std::string>& vec2) {
+    
     std::unordered_map<int, std::pair<std::string, std::string>> differences;
 
-    size_t minSize = std::min(array1.size(), array2.size());
+    size_t minSize = std::min(vec1.size(), vec2.size());
     
-    // najkrotszy
+    // porównanie vectorów
     for (size_t i = 0; i < minSize; i++) {
-        if (array1[i] != array2[i]) {
-            differences[i] = {array1[i], array2[i]};
+        if (vec1[i] != vec2[i]) {
+            differences[i] = {vec1[i], vec2[i]};
         }
     }
 
-    // dodawanie resztek
-    for (size_t i = minSize; i < array1.size(); i++) {
-        differences[i] = {array1[i], ""}; 
+    // dodawanie reszty
+    for (size_t i = minSize; i < vec1.size(); i++) {
+        differences[i] = {vec1[i], ""}; 
     }
-    for (size_t i = minSize; i < array2.size(); i++) {
-        differences[i] = {"", array2[i]}; 
+    for (size_t i = minSize; i < vec2.size(); i++) {
+        differences[i] = {"", vec2[i]}; 
     }
-return differences;
 
+    return differences;
 }
 
 
+//szuka substringi w lcs zwraca różnicy
 std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> 
-findSubstring(const std::string& lcs, const std::unordered_map<int, std::string>& mapa) {
+findSubstring(const std::string& lcs, const std::unordered_map<int, std::string>& mapa) { //++
     std::unordered_map<int, std::string> foundSubstrings;
     std::unordered_map<int, std::string> notFoundSubstrings;
 
@@ -106,7 +105,7 @@ findSubstring(const std::string& lcs, const std::unordered_map<int, std::string>
     return {foundSubstrings, notFoundSubstrings};
 }
 
-
+//funkcja dla threadsów
 void threadFunction(const std::string& lcs, const std::unordered_map<int, std::string>& mapa, 
                     std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>>& result) {
     result = findSubstring(lcs, mapa);
@@ -128,24 +127,62 @@ findDelAdd(const std::unordered_map<int, std::pair<std::string, std::string>>& d
         secondElements[diff.first] = diff.second.second;
         second_file_differences+=diff.second.second;
     }
-
-    std::vector<char> lcs = LCS::fill_dyn_matrix(x, y); // tutaj coś jest źle
-    string lcss(lcs.begin(), lcs.end()); 
-    std::cout<<lcss<<endl;
-
-
     return {firstElements, secondElements};
 }
 
 
 
     
-    
-    
+
+
+   
+
+
+int main() {
+    std::string file1;
+    std::string file2;
+
+    if (fileExists(file1, file2) !=true){ //podać nazwe
+       std::cout<"terminate"<endl
+        std::terminate();
+    }
+    auto [lines_file1, lines_file2] = read_files("file1.txt", "file2.txt");
+     
+    std::vector<char> lcs = LCS::fill_dyn_matrix(lines_file1, lines_file2); // tutaj coś jest źle
+    string lcss(lcs.begin(), lcs.end()); 
+    std::cout<<lcss<<endl;
+
+
+//compare i dodać  lcs
+
+    std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result1;
+    std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result2;
+
+    std::thread thread1(threadFunction, lcs, std::ref(mapa1), std::ref(result1));
+    std::thread thread2(threadFunction, lcs, std::ref(mapa2), std::ref(result2));
+
+    thread1.join();
+    thread2.join();
+
+   
+
+    return 0;
+}
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+/*
 
 std::pair<std::unordered_map<std::string, std::vector<int>>, int> countHashesAddToHashMaps() {
     
@@ -173,30 +210,4 @@ std::pair<std::unordered_map<std::string, std::vector<int>>, int> countHashesAdd
     return {resultMap, lineNumber - 1};
 }
 
-
-
-
-int main() {
-
-    if (fileExists !=true){
-       std::cout<"terminate"<endl
-        std::terminate();
-    }
-    auto [lines_file1, lines_file2] = read_files("file1.txt", "file2.txt");
-
-
-//compare i dodać  lcs
-
-    std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result1;
-    std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result2;
-
-    std::thread thread1(threadFunction, lcs, std::ref(mapa1), std::ref(result1));
-    std::thread thread2(threadFunction, lcs, std::ref(mapa2), std::ref(result2));
-
-    thread1.join();
-    thread2.join();
-
-   
-
-    return 0;
-}
+*/
