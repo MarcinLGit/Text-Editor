@@ -88,7 +88,7 @@ compare(const std::vector<std::string>& vec1, const std::vector<std::string>& ve
 
 //szuka substringi w lcs zwraca różnicy
 std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> 
-findSubstring(const std::string& lcs, const std::unordered_map<int, std::string>& mapa) { //++
+findAddDel(const std::string& lcs, const std::unordered_map<int, std::string>& mapa) { //++
     std::unordered_map<int, std::string> foundSubstrings;
     std::unordered_map<int, std::string> notFoundSubstrings;
 
@@ -108,12 +108,12 @@ findSubstring(const std::string& lcs, const std::unordered_map<int, std::string>
 //funkcja dla threadsów
 void threadFunction(const std::string& lcs, const std::unordered_map<int, std::string>& mapa, 
                     std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>>& result) {
-    result = findSubstring(lcs, mapa);
+    result = findAddDel(lcs, mapa);
 }
 
 
 std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> 
-findDelAdd(const std::unordered_map<int, std::pair<std::string, std::string>>& differences) {
+convert_to_two_hashmaps(const std::unordered_map<int, std::pair<std::string, std::string>>& differences) {
 
     std::string first_file_differences;
     std::string second_file_differences;
@@ -131,29 +131,33 @@ findDelAdd(const std::unordered_map<int, std::pair<std::string, std::string>>& d
 }
 
 
+// metoda dla wypisywania
+void printMap(const std::string& title, const std::unordered_map<int, std::string>& mapa) {
+    std::cout << title << std::endl;
+    for (const auto& pair : mapa) {
+        std::cout << "Индекс: " << pair.first << ", Строка: " << pair.second << std::endl;
+    }
+}
 
-    
-
-
-   
 
 
 int main() {
-    std::string file1;
-    std::string file2;
+    std::string file1="file1.txt";
+    std::string file2="file2.txt";
 
     if (fileExists(file1, file2) !=true){ //podać nazwe
        std::cout<"terminate"<endl
         std::terminate();
     }
     auto [lines_file1, lines_file2] = read_files("file1.txt", "file2.txt");
+
+    std::unordered_map<int, std::pair<std::string, std::string>> differences_map =compare(lines_file1, lines_file2);
+    auto [first_file_differences_hashmap, second_file_differences_hashmap] = convert_to_two_hashmaps(differences_map);
+
      
-    std::vector<char> lcs = LCS::fill_dyn_matrix(lines_file1, lines_file2); // tutaj coś jest źle
+    std::vector<char> lcs = LCS::fill_dyn_matrix(lines_file1, lines_file2); 
     string lcss(lcs.begin(), lcs.end()); 
     std::cout<<lcss<<endl;
-
-
-//compare i dodać  lcs
 
     std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result1;
     std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result2;
@@ -164,6 +168,14 @@ int main() {
     thread1.join();
     thread2.join();
 
+    std::cout << "pierwszy plik" << std::endl;
+    printMap("znalezione stringi:", result1.first);
+    printMap("usunięte stringi:", result1.second);
+
+    // Вывод результатов для второго потока
+    std::cout << "drugi plik:" << std::endl;
+    printMap("znalezione stringi:", result2.first);
+    printMap("dodane stringi:", result2.second);
    
 
     return 0;
