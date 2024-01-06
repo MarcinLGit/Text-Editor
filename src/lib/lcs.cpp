@@ -4,13 +4,13 @@
 #include <algorithm> 
 
 class LCS {
-public:
-    static std::vector<char> fill_dyn_matrix(const std::string &x, const std::string &y) {
+public: // tutaj w funkcji usunoem const
+    static std::vector<char> fill_dyn_matrix( std::string &x,  std::string &y) {
         int m = x.length();
         int n = y.length();
         std::vector<std::vector<int>> L(m + 1, std::vector<int>(n + 1));
 
-        // Вычисление матрицы L
+        // matrix L
         for (int i = 1; i <= m; i++) {
             for (int j = 1; j <= n; j++) {
                 if (x[i-1] == y[j-1])
@@ -20,7 +20,7 @@ public:
             }
         }
 
-        // Восстановление LCS
+        // LCS
         std::vector<char> lcs;
         int x_i = m, y_i = n;
         while (x_i > 0 && y_i > 0) {

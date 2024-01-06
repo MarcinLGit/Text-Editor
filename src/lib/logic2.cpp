@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include <mutex>
+#include <algorithm>
 
 
 HashCalculator hasher;
@@ -108,25 +109,7 @@ void threadFunction(const std::string& lcs, const std::unordered_map<int, std::s
     result = findAddDel(lcs, mapa);
 }
 
-/*
-std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> 
-convert_to_two_hashmaps(const std::unordered_map<int, std::pair<std::string, std::string>>& differences) {
 
-    std::string first_file_differences;
-    std::string second_file_differences;
-
-    std::unordered_map<int, std::string> firstElements;
-    std::unordered_map<int, std::string> secondElements;
-
-    for (const auto& diff : differences) {
-        firstElements[diff.first] = diff.second.first;
-        first_file_differences+=diff.second.first;
-        secondElements[diff.first] = diff.second.second;
-        second_file_differences+=diff.second.second;
-    }
-    return {firstElements, secondElements};
-}
-*/
 
 
 std::tuple<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>, std::string, std::string> 
@@ -152,10 +135,43 @@ convert_to_two_hashmaps_and_strings(const std::unordered_map<int, std::pair<std:
 void printMap(const std::string& title, const std::unordered_map<int, std::string>& mapa) {
     std::cout << title << std::endl;
     for (const auto& pair : mapa) {
-        std::cout << "Индекс: " << pair.first << ", Строка: " << pair.second << std::endl;
+        std::cout << "Indeks: " << pair.first << ", Zawartosc " << pair.second << std::endl;
     }
 }
 
+std::vector<char> fill_dyn_matrix( std::string &x,  std::string &y) {
+        int m = x.length();
+        int n = y.length();
+        std::vector<std::vector<int>> L(m + 1, std::vector<int>(n + 1));
+
+        // matrix L
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (x[i-1] == y[j-1])
+                    L[i][j] = L[i-1][j-1] + 1;
+                else
+                    L[i][j] = std::max(L[i-1][j], L[i][j-1]);
+            }
+        }
+
+        // LCS
+        std::vector<char> lcs;
+        int x_i = m, y_i = n;
+        while (x_i > 0 && y_i > 0) {
+            if (x[x_i-1] == y[y_i-1]) {
+                lcs.push_back(x[x_i-1]);
+                x_i--;
+                y_i--;
+            } else if (L[x_i-1][y_i] > L[x_i][y_i-1]) {
+                x_i--;
+            } else {
+                y_i--;
+            }
+        }
+
+        std::reverse(lcs.begin(), lcs.end());
+        return lcs;
+    }
 
 
 int main() {
@@ -173,30 +189,45 @@ int main() {
     auto [first_file_differences_hashmap, second_file_differences_hashmap,firstDifferencesString, secondDifferencesString]
     =convert_to_two_hashmaps_and_strings(differences_map);
      
-    LCS lcsClass;
+     LCS lcs_instance;
 
-    std::vector<char> lcs = lcsClass.fill_dyn_matrix(firstDifferencesString, secondDifferencesString); 
-    std::string lcss(lcs.begin(), lcs.end()); 
-    std::cout<<lcss<<std::endl;
+
+   
+    
+    std::vector<char> lcs_vector = fill_dyn_matrix(firstDifferencesString, secondDifferencesString); 
+    std::string lcss(lcs_vector.begin(), lcs_vector.end()); 
+    std::cout << lcss << std::endl;
+
 
     std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result1;
     std::pair<std::unordered_map<int, std::string>, std::unordered_map<int, std::string>> result2;
 
-    std::thread thread1(threadFunction, lcs, std::ref(first_file_differences_hashmap), std::ref(result1));
-    std::thread thread2(threadFunction, lcs, std::ref(second_file_differences_hashmap), std::ref(result2));
+    
+    std::thread thread1(threadFunction, lcss, std::ref(first_file_differences_hashmap), std::ref(result1));
+    std::thread thread2(threadFunction, lcss, std::ref(second_file_differences_hashmap), std::ref(result2));
 
     thread1.join();
     thread2.join();
 
     std::cout << "pierwszy plik" << std::endl;
     printMap("znalezione stringi:", result1.first);
+    std::cout << " " << std::endl;
     printMap("usunięte stringi:", result1.second);
+    std::cout << " " << std::endl;
 
     
     std::cout << "drugi plik:" << std::endl;
+    std::cout << " " << std::endl;
     printMap("znalezione stringi:", result2.first);
+    std::cout << " " << std::endl;
     printMap("dodane stringi:", result2.second);
    
 
     return 0;
 }
+
+
+
+
+
+
