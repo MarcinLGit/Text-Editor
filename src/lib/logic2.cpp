@@ -173,6 +173,43 @@ std::vector<char> fill_dyn_matrix( std::string &x,  std::string &y) {
         return lcs;
     }
 
+// dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
+std::vector<std::pair<int, int>> findIdenticalElements(
+    std::unordered_map<int, std::string>& deleted_file_one_indexes,
+    std::unordered_map<int, std::string>& added_file_two_indexes) {
+
+    std::vector<std::pair<int, int>> identicalElements;
+    std::vector<int> keysToDeleteInMap1, keysToDeleteInMap2;
+
+    for (const auto& pair1 : deleted_file_one_indexes) {
+        for (const auto& pair2 : added_file_two_indexes) {
+            if (pair1.second == pair2.second) {
+                identicalElements.push_back({pair1.first, pair2.first});
+                keysToDeleteInMap1.push_back(pair1.first);
+                keysToDeleteInMap2.push_back(pair2.first);
+                break; // Выходим из внутреннего цикла после первого совпадения
+            }
+        }
+    }
+
+    // usuniecia po iteracji
+    for (auto key : keysToDeleteInMap1) {
+        deleted_file_one_indexes.erase(key);
+    }
+    for (auto key : keysToDeleteInMap2) {
+        added_file_two_indexes.erase(key);
+    }
+
+    return identicalElements;
+}
+
+// 
+void printIdenticalElements(const std::vector<std::pair<int, int>>& identicalElements) {
+    for (const auto& elem : identicalElements) {
+        std::cout << "Key 1: " << elem.first << ", Key 2: " << elem.second << std::endl;
+    }
+}
+
 
 int main() {
 
@@ -207,7 +244,7 @@ int main() {
     std::thread thread2(threadFunction, lcss, std::ref(second_file_differences_hashmap), std::ref(result2));
 
     thread1.join();
-    thread2.join();
+    thread2.join();   // na ten moment widac add i del
 
     std::cout << "pierwszy plik" << std::endl;
     printMap("znalezione stringi:", result1.first);
@@ -222,6 +259,34 @@ int main() {
     std::cout << " " << std::endl;
     printMap("dodane stringi:", result2.second);
    
+
+
+    std::vector<std::pair<int, int>> changes = findIdenticalElements(result1.second, result2.second);
+
+
+    std::cout << "Po zmianie" << std::endl;
+    std::cout << "  " << std::endl;
+
+    std::cout << "pierwszy plik" << std::endl;
+    printMap("znalezione stringi:", result1.first);
+    std::cout << " " << std::endl;
+    printMap("usunięte stringi:", result1.second);
+    std::cout << " " << std::endl;
+
+    
+    std::cout << "drugi plik:" << std::endl;
+    std::cout << " " << std::endl;
+    printMap("znalezione stringi:", result2.first);
+    std::cout << " " << std::endl;
+    printMap("dodane stringi:", result2.second);
+    std::cout << "  " << std::endl;
+    std::cout << "  " << std::endl;
+
+    printIdenticalElements(changes);
+
+
+
+
 
     return 0;
 }
