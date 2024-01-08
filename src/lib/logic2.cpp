@@ -254,7 +254,7 @@ void findSwaps(
         }
         else{swapedElement.push_back(swapedForThisIndexElement);
             std::vector<int>vectorFordelete=elementsForDelete(deleted_file_one_indexes,added_file_two_indexes,key);
-            for (auto key : elementsForDelete) {
+            for (auto key : vectorFordelete) {
                 deleted_file_one_indexes.erase(key);
                 added_file_two_indexes.erase(key+1);
                 }
