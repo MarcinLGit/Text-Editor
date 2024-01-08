@@ -10,11 +10,7 @@
 #include <vector>
 #include <mutex>
 #include <algorithm>
-
-
-HashCalculator hasher;
-
-Leven leven;
+#include <map>
 
 //sprawdzenie czy plik istnieje
 bool fileExists(const std::string& filePath) {
@@ -185,9 +181,11 @@ std::vector<std::pair<int, int>> findIdenticalElements(
         for (const auto& pair2 : added_file_two_indexes) {
             if (pair1.second == pair2.second) {
                 identicalElements.push_back({pair1.first, pair2.first});
+                //deleted_file_one_indexes.erase(pair1.first);
+                //added_file_two_indexes.erase(pair2.first);
                 keysToDeleteInMap1.push_back(pair1.first);
                 keysToDeleteInMap2.push_back(pair2.first);
-                break; // Выходим из внутреннего цикла после первого совпадения
+                
             }
         }
     }
@@ -203,12 +201,100 @@ std::vector<std::pair<int, int>> findIdenticalElements(
     return identicalElements;
 }
 
+
+
+
+
+
+
 // 
 void printIdenticalElements(const std::vector<std::pair<int, int>>& identicalElements) {
     for (const auto& elem : identicalElements) {
         std::cout << "Key 1: " << elem.first << ", Key 2: " << elem.second << std::endl;
     }
 }
+
+
+int levenshteinDistance(const std::string &s1, const std::string &s2) {
+    int m = s1.length(), n = s2.length();
+    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1));
+
+    for (int i = 0; i <= m; i++) dp[i][0] = i;
+    for (int j = 0; j <= n; j++) dp[0][j] = j;
+
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            int cost = (s1[i - 1] == s2[j - 1]) ? 0 : 1;
+
+            int deletion = dp[i - 1][j] + 1;
+            int insertion = dp[i][j - 1] + 1;
+            int substitution = dp[i - 1][j - 1] + cost;
+
+            dp[i][j] = std::min(std::min(deletion, insertion), substitution);
+        }
+    }
+
+    return dp[m][n];
+}
+
+
+double levenshteinPercentage(const std::string &s1, const std::string &s2) {
+    int distance = levenshteinDistance(s1, s2);
+    int maxLength = std::max(s1.length(), s2.length());
+    
+    //nie dzielić na zero
+    if (maxLength == 0) return 0.0; 
+
+    return 100.0 * distance / maxLength;
+}
+
+
+template <typename K, typename V>
+std::map<K, V> unorderedMapToMap(const std::unordered_map<K, V>& unorderedMap) {
+    std::map<K, V> orderedMap;
+    for (const auto& kv : unorderedMap) {
+        orderedMap.insert(kv);
+    }
+    return orderedMap;
+}
+
+
+
+//tutaj tez pytanie czy wyszukiwac modyfikacje tylko w odpowiednich linijach czy razem z zamiana
+std::vector<int> findModificationsWithLevenshtein(
+    std::unordered_map<int, std::string>& deleted_file_one_indexes,
+    std::unordered_map<int, std::string>& added_file_two_indexes) {
+
+    std::vector<int> modifications;
+    std::vector<int> keysToDeleteInMap;
+
+     for (const auto& kv : deleted_file_one_indexes) {
+        std::cout << "Klucz: " << kv.first << std::endl;
+    }
+
+         for (const auto& kv : deleted_file_one_indexes) {
+                double percentage = levenshteinPercentage(kv.second,added_file_two_indexes[kv.first] );
+            if (percentage < 90) { 
+                modifications.push_back(kv.first);
+                keysToDeleteInMap.push_back(kv.first);
+                
+            }
+        }
+    
+
+    // Usuwanie kluczy po iteracji
+    for (auto key : keysToDeleteInMap) {
+        deleted_file_one_indexes.erase(key);
+    }
+    for (auto key : keysToDeleteInMap) {
+        added_file_two_indexes.erase(key);
+    }
+
+    return modifications;
+}
+
+
+
 
 
 int main() {
@@ -283,6 +369,14 @@ int main() {
     std::cout << "  " << std::endl;
 
     printIdenticalElements(changes);
+
+
+    std::cout<<"po wyszukiwaniu modyfikacji"<<std::endl;
+    //po wyszukiwaniu zmian
+    std::vector<int> modifications = findModificationsWithLevenshtein(result1.second,result2.second);
+    for (int number : modifications) { 
+        std::cout << number << " ";
+    } 
 
 
 
