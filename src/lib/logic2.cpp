@@ -179,7 +179,7 @@ std::vector<K> getKeys(const std::map<K, V>& map) {
     return keys;
 }
 
-
+std::vector<std::pair<int, int>> swapedElement;
 
 // dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
 std::pair<int,int> findIdenticalElement(
@@ -235,12 +235,13 @@ return keysToDeleteInMap;
 
 // dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
 
-std::vector<std::pair<int, int>> swapedElement;
+
 
 // dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
-void findSwaps(
+std::vector<std::pair<int, int>> findSwaps(
     std::map<int, std::string>& deleted_file_one_indexes,
-    std::map<int, std::string>& added_file_two_indexes) {
+    std::map<int, std::string>& added_file_two_indexes,
+    std::vector<std::pair<int, int>>& swapedElement) {
     
     std::vector<int> keys = getKeys(deleted_file_one_indexes);
     std::vector<int> keys2 = getKeys(added_file_two_indexes);//uzyc copy
@@ -261,11 +262,12 @@ void findSwaps(
             if(key= keys.size()-1){
                 break;
             }
-            else{findSwaps(deleted_file_one_indexes,added_file_two_indexes);}
+            else{swapedElement=findSwaps(deleted_file_one_indexes,added_file_two_indexes,swapedElement);}
                  
         }
     
     }
+return swapedElement;
 }
 
 
@@ -439,8 +441,8 @@ int main() {
     printMap("dodane stringi:", result2.second);
     std::cout << "  " << std::endl;
     std::cout << "  " << std::endl;
-
-
+    std::vector<std::pair<int, int>> swapedElement;
+    swapedElement=findSwaps(result12,result22,swapedElement);
     std::cout<<"swaped lines"<<std::endl;
     printIdenticalElements(swapedElement);
 
