@@ -171,20 +171,24 @@ std::vector<char> fill_dyn_matrix( std::string &x,  std::string &y) {
 
 // dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
 std::vector<std::pair<int, int>> findIdenticalElements(
-    std::unordered_map<int, std::string>& deleted_file_one_indexes,
-    std::unordered_map<int, std::string>& added_file_two_indexes) {
+    std::map<int, std::string>& deleted_file_one_indexes,
+    std::map<int, std::string>& added_file_two_indexes) {
+    int plusLineForCompare =0;
 
     std::vector<std::pair<int, int>> identicalElements;
     std::vector<int> keysToDeleteInMap1, keysToDeleteInMap2;
 
     for (const auto& pair1 : deleted_file_one_indexes) {
         for (const auto& pair2 : added_file_two_indexes) {
-            if (pair1.second == pair2.second) {
+            if (pair1.second == added_file_two_indexes[pair2.first]) {
+                plusLineForCompare=plusLineForCompare+1;
                 identicalElements.push_back({pair1.first, pair2.first});
                 //deleted_file_one_indexes.erase(pair1.first);
                 //added_file_two_indexes.erase(pair2.first);
                 keysToDeleteInMap1.push_back(pair1.first);
                 keysToDeleteInMap2.push_back(pair2.first);
+
+                
                 
             }
         }
@@ -346,8 +350,9 @@ int main() {
     printMap("dodane stringi:", result2.second);
    
 
-
-    std::vector<std::pair<int, int>> changes = findIdenticalElements(result1.second, result2.second);
+    std::map<int, std::string>result12=unorderedMapToMap(result1.second);
+    std::map<int,std::string>result22=unorderedMapToMap(result2.second);
+    std::vector<std::pair<int, int>> changes = findIdenticalElements(result12, result22);
 
 
     std::cout << "Po zmianie" << std::endl;
@@ -368,6 +373,8 @@ int main() {
     std::cout << "  " << std::endl;
     std::cout << "  " << std::endl;
 
+
+    std::cout<<"swaped lines"<<std::endl;
     printIdenticalElements(changes);
 
 
