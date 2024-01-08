@@ -169,41 +169,108 @@ std::vector<char> fill_dyn_matrix( std::string &x,  std::string &y) {
         return lcs;
     }
 
-// dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
-std::vector<std::pair<int, int>> findIdenticalElements(
-    std::map<int, std::string>& deleted_file_one_indexes,
-    std::map<int, std::string>& added_file_two_indexes) {
-    int plusLineForCompare =0;
 
-    std::vector<std::pair<int, int>> identicalElements;
+template <typename K, typename V>
+std::vector<K> getKeys(const std::map<K, V>& map) {
+    std::vector<K> keys;
+    for (const auto& kv : map) {
+        keys.push_back(kv.first);
+    }
+    return keys;
+}
+
+
+
+// dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
+std::pair<int,int> findIdenticalElement(
+    std::map<int, std::string>& deleted_file_one_indexes,
+    std::map<int, std::string>& added_file_two_indexes,
+    int& deleted_file_one_indexe_key) {
+
+    std::vector<int> keys2 = getKeys(deleted_file_one_indexes);//uzyc copy
+    std::pair<int,int> identicalElements;
+
+    
     std::vector<int> keysToDeleteInMap1, keysToDeleteInMap2;
 
-    for (const auto& pair1 : deleted_file_one_indexes) {
-        for (const auto& pair2 : added_file_two_indexes) {
-            if (pair1.second == added_file_two_indexes[pair2.first]) {
-                plusLineForCompare=plusLineForCompare+1;
-                identicalElements.push_back({pair1.first, pair2.first});
-                //deleted_file_one_indexes.erase(pair1.first);
-                //added_file_two_indexes.erase(pair2.first);
-                keysToDeleteInMap1.push_back(pair1.first);
-                keysToDeleteInMap2.push_back(pair2.first);
-
-                
-                
+        for (int key2:keys2) {
+            if (deleted_file_one_indexes[deleted_file_one_indexe_key] == added_file_two_indexes[key2]) {
+                identicalElements =  std::make_pair(deleted_file_one_indexe_key, key2);
+                deleted_file_one_indexes.erase(deleted_file_one_indexe_key);
+                added_file_two_indexes.erase(key2);
+                break;
             }
         }
-    }
+return identicalElements; //pozniej sprawdzic czy jest puste znaczenie czy nie
+
+}
+
+
+
+//porwnywanie objektow  jest to zrobione dla wyszukiwania ktory z  linijek jest zmieniony
+std::vector<int> elementsForDelete(
+    std::map<int, std::string>& deleted_file_one_indexes,
+    std::map<int, std::string>& added_file_two_indexes,
+    int& startFrom) {
+
+    std::vector<int> keys = getKeys(deleted_file_one_indexes);//uzyc copy
+
+    std::vector<int> keysToDeleteInMap; 
+        for (int key:keys) {
+            if (key<startFrom) {
+                continue;
+            if (deleted_file_one_indexes[key]== added_file_two_indexes[key+1]){
+                keysToDeleteInMap.push_back(key);
+            }   
+        }
+        }
 
     // usuniecia po iteracji
-    for (auto key : keysToDeleteInMap1) {
-        deleted_file_one_indexes.erase(key);
-    }
-    for (auto key : keysToDeleteInMap2) {
-        added_file_two_indexes.erase(key);
-    }
+return keysToDeleteInMap;
 
-    return identicalElements;
 }
+
+
+
+
+// dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
+
+std::vector<std::pair<int, int>> swapedElement;
+
+// dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
+void findSwaps(
+    std::map<int, std::string>& deleted_file_one_indexes,
+    std::map<int, std::string>& added_file_two_indexes) {
+    
+    std::vector<int> keys = getKeys(deleted_file_one_indexes);
+    std::vector<int> keys2 = getKeys(added_file_two_indexes);//uzyc copy
+
+    std::vector<int> keysToDeleteInMap1, keysToDeleteInMap2;
+
+     for (int key : keys) { 
+        std::pair<int,int>swapedForThisIndexElement=findIdenticalElement(deleted_file_one_indexes,added_file_two_indexes, key);
+        if(swapedForThisIndexElement.first==0){
+            continue;
+        }
+        else{swapedElement.push_back(swapedForThisIndexElement);
+            std::vector<int>vectorFordelete=elementsForDelete(deleted_file_one_indexes,added_file_two_indexes,key);
+            for (auto key : elementsForDelete) {
+                deleted_file_one_indexes.erase(key);
+                added_file_two_indexes.erase(key+1);
+                }
+            if(key= keys.size()-1){
+                break;
+            }
+            else{findSwaps(deleted_file_one_indexes,added_file_two_indexes);}
+                 
+        }
+    
+    }
+}
+
+
+
+
 
 
 
@@ -352,7 +419,7 @@ int main() {
 
     std::map<int, std::string>result12=unorderedMapToMap(result1.second);
     std::map<int,std::string>result22=unorderedMapToMap(result2.second);
-    std::vector<std::pair<int, int>> changes = findIdenticalElements(result12, result22);
+    //std::vector<std::pair<int, int>> changes = findIdenticalElements(result12, result22);
 
 
     std::cout << "Po zmianie" << std::endl;
@@ -375,7 +442,7 @@ int main() {
 
 
     std::cout<<"swaped lines"<<std::endl;
-    printIdenticalElements(changes);
+    printIdenticalElements(swapedElement);
 
 
     std::cout<<"po wyszukiwaniu modyfikacji"<<std::endl;
