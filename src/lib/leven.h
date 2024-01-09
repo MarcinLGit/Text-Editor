@@ -1,10 +1,15 @@
-#ifndef LEVEN_H
-#define LEVEN_H
+// levenshtein.h
+#ifndef LEVENSHTEIN_H
+#define LEVENSHTEIN_H
 
 #include <string>
-class Leven{
-public:
-    int levenshteinDistance(const std::string &s1, const std::string &s2);
-    double levenshteinPercentage(const std::string &s1, const std::string &s2);
-};
+#include <vector>
+#include <algorithm> // Dla std::min
+
+// Deklaracja funkcji obliczającej odległość Levenshteina
+int levenshteinDistance(const std::string &s1, const std::string &s2);
+
+// Deklaracja funkcji obliczającej procentową różnicę pomiędzy ciągami znaków
+double levenshteinPercentage(const std::string &s1, const std::string &s2);
+
 #endif // LEVENSHTEIN_H

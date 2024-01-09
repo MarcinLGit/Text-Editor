@@ -3,8 +3,7 @@
 
 #include <string>
 #include <vector>
-class LCS{
-public:
-    static std::vector<char> fill_dyn_matrix(const std::string &x, const std::string &y);
-};
-#endif
+
+    std::vector<char> fill_dyn_matrix(std::string &x, std::string &y);
+
+#endif // LCS_H

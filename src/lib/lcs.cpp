@@ -3,9 +3,9 @@
 #include <string>
 #include <algorithm> 
 
-class LCS {
-public: // tutaj w funkcji usunoem const
-    static std::vector<char> fill_dyn_matrix( std::string &x,  std::string &y) {
+
+
+    std::vector<char> fill_dyn_matrix( std::string &x,  std::string &y) {
         int m = x.length();
         int n = y.length();
         std::vector<std::vector<int>> L(m + 1, std::vector<int>(n + 1));
@@ -38,7 +38,7 @@ public: // tutaj w funkcji usunoem const
         std::reverse(lcs.begin(), lcs.end());
         return lcs;
     }
-};
+
 /*
 int main() {
     std::string x = "AGGTAB";
