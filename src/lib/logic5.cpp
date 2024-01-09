@@ -1,5 +1,3 @@
-#include "hash_calculator.h" 
-#include "logic.h"
 #include "leven.h"
 #include "lcs.h"
 #include <iostream>
@@ -11,6 +9,7 @@
 #include <mutex>
 #include <algorithm>
 #include <map>
+#include "makeChanges.h"
 
 //sprawdzenie czy plik istnieje
 bool fileExists(const std::string& filePath) {
@@ -102,6 +101,7 @@ void threadFunction(const std::string& lcs, const std::map<int, std::string>& ma
 
 
 
+//konwertacja
 
 std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::string, std::string> 
 convert_to_two_hashmaps_and_strings(const std::map<int, std::pair<std::string, std::string>>& differences) {
@@ -130,39 +130,7 @@ void printMap(const std::string& title, const std::map<int, std::string>& mapa) 
     }
 }
 
-std::vector<char> fill_dyn_matrix( std::string &x,  std::string &y) {
-        int m = x.length();
-        int n = y.length();
-        std::vector<std::vector<int>> L(m + 1, std::vector<int>(n + 1));
 
-        // matrix L
-        for (int i = 1; i <= m; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (x[i-1] == y[j-1])
-                    L[i][j] = L[i-1][j-1] + 1;
-                else
-                    L[i][j] = std::max(L[i-1][j], L[i][j-1]);
-            }
-        }
-
-        // LCS
-        std::vector<char> lcs;
-        int x_i = m, y_i = n;
-        while (x_i > 0 && y_i > 0) {
-            if (x[x_i-1] == y[y_i-1]) {
-                lcs.push_back(x[x_i-1]);
-                x_i--;
-                y_i--;
-            } else if (L[x_i-1][y_i] > L[x_i][y_i-1]) {
-                x_i--;
-            } else {
-                y_i--;
-            }
-        }
-
-        std::reverse(lcs.begin(), lcs.end());
-        return lcs;
-    }
 
 
 template <typename K, typename V>
@@ -227,7 +195,7 @@ std::pair<std::vector<int>,std::vector<int>> elementsForDelete(
         }
         
 
-    // usuniecia po iteracji
+    //  zrobic usuniecia po iteracji  moze sama funkcje?
 return std::make_pair(keysToDeleteInMap1,keysToDeleteInMap2);
 
 }
@@ -286,40 +254,6 @@ void printIdenticalElements(const std::vector<std::pair<int, int>>& identicalEle
 }
 
 
-int levenshteinDistance(const std::string &s1, const std::string &s2) {
-    int m = s1.length(), n = s2.length();
-    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1));
-
-    for (int i = 0; i <= m; i++) dp[i][0] = i;
-    for (int j = 0; j <= n; j++) dp[0][j] = j;
-
-    for (int i = 1; i <= m; i++) {
-        for (int j = 1; j <= n; j++) {
-            int cost = (s1[i - 1] == s2[j - 1]) ? 0 : 1;
-
-            int deletion = dp[i - 1][j] + 1;
-            int insertion = dp[i][j - 1] + 1;
-            int substitution = dp[i - 1][j - 1] + cost;
-
-            dp[i][j] = std::min(std::min(deletion, insertion), substitution);
-        }
-    }
-
-    return dp[m][n];
-}
-
-
-double levenshteinPercentage(const std::string &s1, const std::string &s2) {
-    int distance = levenshteinDistance(s1, s2);
-    int maxLength = std::max(s1.length(), s2.length());
-    
-    //nie dzielić na zero
-    if (maxLength == 0) return 0.0; 
-
-    return 100.0 * distance / maxLength;
-}
-
-
 template <typename K, typename V>
 std::map<K, V> unorderedMapToMap(const std::map<K, V>& unorderedMap) {
     std::map<K, V> orderedMap;
@@ -332,6 +266,7 @@ std::map<K, V> unorderedMapToMap(const std::map<K, V>& unorderedMap) {
 
 
 //tutaj tez pytanie czy wyszukiwac modyfikacje tylko w odpowiednich linijach czy razem z zamiana
+//zrobiono jak w meld
 std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>>  findModificationsWithLevenshtein(
     std::map<int, std::string>& deleted_file_one_indexes,
     std::map<int, std::string>& added_file_two_indexes) {
@@ -353,7 +288,7 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<i
         }
     
 
-    // Usuwanie kluczy po iteracji
+    // Usuwanie kluczy po iteracji mozna w sumie dac funkcje do usuwania
     for (auto key : keysToDeleteInMap) {
         deleted_file_one_indexes.erase(key);
     }
@@ -367,6 +302,159 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<i
 
 
 
+
+// do oddzielnej klasy bo to jest zmiana plikow
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+std::tuple<std::map<int, std::string>,
+           std::map<int, std::string>,
+           std::vector<std::pair<int, int>>,
+           std::vector<int>> mainFunction(const std::string& fileOnePath, 
+                                          const std::string& fileTwoPath){
+        
+        if (files_exist(fileOnePath, fileTwoPath) !=true){ 
+            std::cout<<"terminate"<<std::endl;
+            std::terminate();
+        }
+
+        auto [lines_file1, lines_file2] = read_files(fileOnePath, fileTwoPath);
+
+
+     std::map<int, std::string> deleted_lines;
+     std::map<int, std::string> added_lines;
+     std::vector<std::pair<int, int>> swapedElement;
+     std::vector<int> modifications;
+
+        
+
+        std::map<int, std::pair<std::string, std::string>> differences_map =compare(lines_file1, lines_file2); //sprawdzenie czy
+        if(differences_map.size()==0){
+            return std::make_tuple(added_lines,deleted_lines,swapedElement,modifications);
+        }
+
+        auto [first_file_differences_hashmap, second_file_differences_hashmap,firstDifferencesString, secondDifferencesString]
+             =convert_to_two_hashmaps_and_strings(differences_map);
+
+
+        std::vector<char> lcs_vector = fill_dyn_matrix(firstDifferencesString, secondDifferencesString); 
+
+        std::string lcss(lcs_vector.begin(), lcs_vector.end());
+
+
+        std::map<int, std::string>  result1;
+    std::map<int, std::string>  result2;
+    
+    std::thread thread1(threadFunction, lcss, std::ref(first_file_differences_hashmap), std::ref(result1));
+    std::thread thread2(threadFunction, lcss, std::ref(second_file_differences_hashmap), std::ref(result2));
+
+
+    thread1.join();
+    thread2.join();   // na ten moment widac add i dels
+
+    
+    std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<std::pair<int, int>>> tuple;
+    std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>> result;
+    
+    tuple=findSwaps(result1,result2,swapedElement,tuple);
+   
+
+    deleted_lines= std::get<0>(tuple);
+    added_lines= std::get<1>(tuple);
+    
+
+    std::cout<<"po wyszukiwaniu modyfikacji"<<std::endl;
+    //po wyszukiwaniu zmian
+    result = findModificationsWithLevenshtein(deleted_lines,added_lines);
+
+    deleted_lines= std::get<0>(result);
+    added_lines= std::get<1>(result);
+    modifications=std::get<2>(result);
+    swapedElement=std::get<2>(tuple);
+
+    return std::make_tuple(added_lines,deleted_lines,swapedElement,modifications);
+    //tutaj troche poprawi to dodawanie do tuple
+
+    }
+
+int main(){
+
+    
+
+    std::string file1="file1.txt";
+    std::string file2="file2.txt";
+
+    auto [lines_file1, lines_file2] = read_files(file1, file2);
+
+    auto result= mainFunction(file1, file2);
+
+    auto deleted_lines= std::get<1>(result);
+    auto added_lines= std::get<0>(result);
+    std::vector<int> modifications=std::get<3>(result);
+    auto swapedElement=std::get<2>(result);
+
+
+        //wypisywanie informacji
+    std::cout << " " << std::endl;
+    printMap("dodane stringi:", added_lines);
+    std::cout << "  " << std::endl;
+
+
+    std::cout << " " << std::endl;
+    printMap("usuniete stringi:", deleted_lines);
+    std::cout << "  " << std::endl;
+
+    std::cout<<"swaped lines"<<std::endl;
+    printIdenticalElements(swapedElement);
+
+    std::cout<<" "<<std::endl;
+    std::cout<<"modifications"<<std::endl;
+
+    for (int number : modifications) { 
+        std::cout << number << " ";
+    } 
+    
+
+    //sprawdzi czy nie pusty
+    /*
+    std::pair<std::vector<std::string>,std::map<int,std::string>> afterDeleteFunction;
+    auto firstPair = *deleted_lines.begin();
+    int indexToDelete = firstPair.first;
+    afterDeleteFunction=deleteLine(indexToDelete,deleted_lines,lines_file1,file1);
+    deleted_lines =afterDeleteFunction.second;
+    std::cout << " " << std::endl;
+    printMap("usuniete stringi:", deleted_lines);
+    std::cout << "  " << std::endl;
+
+*/
+    return 0;
+}
+
+
+
+/*
 int main() {
 
     std::string file1="file1.txt";
@@ -382,10 +470,7 @@ int main() {
     auto [first_file_differences_hashmap, second_file_differences_hashmap,firstDifferencesString, secondDifferencesString]
     =convert_to_two_hashmaps_and_strings(differences_map);
      
-     LCS lcs_instance;
-
-
-   
+    
     
     std::vector<char> lcs_vector = fill_dyn_matrix(firstDifferencesString, secondDifferencesString); 
 
@@ -451,8 +536,9 @@ int main() {
     return 0;
 }
 
+*/
 
-
+//sprawdzenie czy pliki identyczne?
 
 
 

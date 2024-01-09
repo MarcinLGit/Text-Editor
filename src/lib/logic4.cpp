@@ -100,7 +100,7 @@ void threadFunction(const std::string& lcs, const std::map<int, std::string>& ma
 
 
 
-//nie pamietam po co to bylo zrobione
+//konwertacja
 
 std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::string, std::string> 
 convert_to_two_hashmaps_and_strings(const std::map<int, std::pair<std::string, std::string>>& differences) {
@@ -318,7 +318,15 @@ std::tuple<std::map<int, std::string>,
 
         auto [lines_file1, lines_file2] = read_files(fileOnePath, fileTwoPath);
 
-        std::map<int, std::pair<std::string, std::string>> differences_map =compare(lines_file1, lines_file2);
+        std::map<int, std::string> deleted_lines;
+        std::map<int, std::string> added_lines;
+        std::vector<std::pair<int, int>> swapedElement;
+        std::vector<int> modifications;
+
+        std::map<int, std::pair<std::string, std::string>> differences_map =compare(lines_file1, lines_file2); //sprawdzenie czy
+         if(differences_map.size()==0){
+            return std::make_tuple(added_lines,deleted_lines,swapedElement,modifications);
+        }
 
         auto [first_file_differences_hashmap, second_file_differences_hashmap,firstDifferencesString, secondDifferencesString]
              =convert_to_two_hashmaps_and_strings(differences_map);
@@ -344,9 +352,7 @@ std::tuple<std::map<int, std::string>,
     std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>> result;
     
     tuple=findSwaps(result1,result2,swapedElement,tuple);
-    std::map<int, std::string> deleted_lines;
-    std::map<int, std::string> added_lines;
-    std::vector<std::pair<int, int>> swapedElement;
+    
 
     deleted_lines= std::get<0>(tuple);
     added_lines= std::get<1>(tuple);
@@ -358,7 +364,7 @@ std::tuple<std::map<int, std::string>,
 
     deleted_lines= std::get<0>(result);
     added_lines= std::get<1>(result);
-    std::vector<int> modifications=std::get<2>(result);
+    modifications=std::get<2>(result);
     swapedElement=std::get<2>(tuple);
 
     return std::make_tuple(added_lines,deleted_lines,swapedElement,modifications);
@@ -492,7 +498,7 @@ int main() {
 
 */
 
-
+//sprawdzenie czy pliki identyczne?
 
 
 
