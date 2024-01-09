@@ -82,15 +82,11 @@ compare(const std::vector<std::string>& vec1, const std::vector<std::string>& ve
 
 //szuka substringi w lcs zwraca różnicy
 std::map<int, std::string> findAddDel(const std::string& lcs, const std::map<int, std::string>& mapa) { //++
-    std::map<int, std::string> foundSubstrings;
+
     std::map<int, std::string> notFoundSubstrings;
 
     for (const auto& pair : mapa) {
-        if (lcs.find(pair.second) != std::string::npos) {
-            // jeśli to substring
-            foundSubstrings.insert(pair);
-        } else {
-            // jeśli to nie substring
+        if (lcs.find(pair.second) == std::string::npos) {
             notFoundSubstrings.insert(pair);
         }
     }
@@ -282,15 +278,6 @@ return std::make_tuple(deleted_file_one_indexes, added_file_two_indexes,swapedEl
 }
 
 
-
-
-
-
-
-
-
-
-
 // 
 void printIdenticalElements(const std::vector<std::pair<int, int>>& identicalElements) {
     for (const auto& elem : identicalElements) {
@@ -380,8 +367,6 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<i
 
 
 
-
-
 int main() {
 
     std::string file1="file1.txt";
@@ -420,31 +405,7 @@ int main() {
 
     thread1.join();
     thread2.join();   // na ten moment widac add i dels
-/*
-    std::cout << "pierwszy plik" << std::endl;
-   
-    printMap("usunięte stringi po pierwszym przejsciu:", result1);
-    std::cout << " " << std::endl;
 
-    
-    std::cout << "drugi plik:" << std::endl;
-    std::cout << " " << std::endl;
-    printMap("dodane stringi po pierwszym przejsciu:", result2);
-   
-
-    //std::map<int, std::string>result12=unorderedMapToMap(result1);
-    //std::map<int,std::string>result22=unorderedMapToMap(result2);
-    //std::vector<std::pair<int, int>> changes = findIdenticalElements(result12, result22);
-
-
-    
-    std::cout << "drugi plik:" << std::endl;
-    std::cout << " " << std::endl;
-    printMap("dodane stringi:", result2);
-    std::cout << "  " << std::endl;
-
-*/
-//od tego momentu trzeba poprawiac
     
     std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<std::pair<int, int>>> tuple;
     std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>> result;
