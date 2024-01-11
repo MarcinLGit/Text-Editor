@@ -19,12 +19,12 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::string, 
 
 
 std::pair<int,int> findIdenticalElement(std::map<int, std::string>& deleted_file_one_indexes,std::map<int, std::string>& added_file_two_indexes,int& deleted_file_one_indexe_key);//testy
-std::pair<std::vector<int>,std::vector<int>> elementsForDelete(std::map<int, std::string>& deleted_file_one_indexes, std::map<int, std::string>& added_file_two_indexes, int& startFrom, int& secondfileSwapIndex);
+std::pair<std::vector<int>,std::vector<int>> elementsForDelete(std::map<int, std::string>& deleted_file_one_indexes, std::map<int, std::string>& added_file_two_indexes, int& startFrom, int& secondfileSwapIndex); //sprawdzono
 std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<std::pair<int, int>>> findSwaps(std::map<int, std::string>& deleted_file_one_indexes, std::map<int, std::string>& added_file_two_indexes, std::vector<std::pair<int, int>>& swapedElement, std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<std::pair<int, int>>>& tuple);//sprawdzono
 
 std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>> findModificationsWithLevenshtein(std::map<int, std::string>& deleted_file_one_indexes, std::map<int, std::string>& added_file_two_indexes);
 std::tuple<std::map<int, std::string>,std::map<int, std::string>,std::vector<std::pair<int, int>>,std::vector<int>> mainFunction(const std::string& fileOnePath, const std::string& fileTwoPath);
 
 #endif // FILE_COMPARISON_UTILS_H
-//wywalic konwertacje z unordered map to map
+/
 // wywali printowanie zrobic tylko logike

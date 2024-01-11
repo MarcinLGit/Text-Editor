@@ -199,7 +199,11 @@ return std::make_pair(keysToDeleteInMap1,keysToDeleteInMap2);
 
 }
 
-
+void printIdenticalElements(const std::vector<std::pair<int, int>>& identicalElements) {
+    for (const auto& elem : identicalElements) {
+        std::cout << "Key 1: " << elem.first << ", Key 2: " << elem.second << std::endl;
+    }
+}
 
 // dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
 
@@ -214,13 +218,23 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<s
     
     std::vector<int> keys = getKeys(deleted_file_one_indexes);
     std::vector<int> keys2 = getKeys(added_file_two_indexes);//uzyc copy
+    printMap("deletes:", deleted_file_one_indexes);
+    printMap("added:", added_file_two_indexes);
+    for (int key : keys){
+        std::cout<<key<<std::endl;
+    }
 
     std::vector<int> keysToDeleteInMap1, keysToDeleteInMap2;
 
      for (int key : keys) { 
+        std::cout<< "key"<< std::endl;
+        std::cout<< key<< std::endl;
         std::pair<int,int>swapedForThisIndexElement=findIdenticalElement(deleted_file_one_indexes,added_file_two_indexes, key);
+        std::cout<<"swapy"<<std::endl;
+        std::cout<<swapedForThisIndexElement.first<<std::endl;
         if(swapedForThisIndexElement.first!=0 && swapedForThisIndexElement.second !=0){
-        
+            std::cout<<"wejscie do if"<< std::endl;
+            
             deleted_file_one_indexes.erase(swapedForThisIndexElement.first);
             added_file_two_indexes.erase(swapedForThisIndexElement.second);
 
@@ -232,12 +246,12 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<s
             for (auto key1 : pairOfVectorsForDelete.second) {
                 added_file_two_indexes.erase(key1);
                 }
-            if(key= keys.size()-1){
+            if(key== keys.size()-1){
                 break;
             }
             else{
             tuple=findSwaps(deleted_file_one_indexes,added_file_two_indexes,swapedElement,tuple);}
-                 
+            
         }
     
     }
@@ -246,11 +260,7 @@ return std::make_tuple(deleted_file_one_indexes, added_file_two_indexes,swapedEl
 
 
 // 
-void printIdenticalElements(const std::vector<std::pair<int, int>>& identicalElements) {
-    for (const auto& elem : identicalElements) {
-        std::cout << "Key 1: " << elem.first << ", Key 2: " << elem.second << std::endl;
-    }
-}
+
 
 
 template <typename K, typename V>
@@ -323,7 +333,7 @@ std::tuple<std::map<int, std::string>,
         std::vector<std::pair<int, int>> swapedElement;
         std::vector<int> modifications;
 
-        std::map<int, std::pair<std::string, std::string>> differences_map =compare(lines_file1, lines_file2); //sprawdzenie czy
+        std::map<int, std::pair<std::string, std::string>> differences_map =compare(lines_file1, lines_file2); //usuniecie podobnych linijek
          if(differences_map.size()==0){
             return std::make_tuple(added_lines,deleted_lines,swapedElement,modifications);
         }
@@ -336,9 +346,10 @@ std::tuple<std::map<int, std::string>,
 
         std::string lcss(lcs_vector.begin(), lcs_vector.end());
 
+    //printMap("only  differences ",first_file_differences_hashmap);
 
         std::map<int, std::string>  result1;
-    std::map<int, std::string>  result2;
+        std::map<int, std::string>  result2;
     
     std::thread thread1(threadFunction, lcss, std::ref(first_file_differences_hashmap), std::ref(result1));
     std::thread thread2(threadFunction, lcss, std::ref(second_file_differences_hashmap), std::ref(result2));
@@ -351,11 +362,22 @@ std::tuple<std::map<int, std::string>,
     std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<std::pair<int, int>>> tuple;
     std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>> result;
     
+    //printMap("deletes ",result1);
+   // printMap("adds",result2);
+
+
     tuple=findSwaps(result1,result2,swapedElement,tuple);
     
 
     deleted_lines= std::get<0>(tuple);
     added_lines= std::get<1>(tuple);
+    swapedElement = std::get<2>(tuple);
+
+   
+   // printMap("deletes po swapach",deleted_lines);
+    //printMap("adds po swapach",added_lines);
+   // std::cout<<"swapy"<<std::endl;
+    //printIdenticalElements(swapedElement);
     
 
     std::cout<<"po wyszukiwaniu modyfikacji"<<std::endl;
@@ -367,11 +389,16 @@ std::tuple<std::map<int, std::string>,
     modifications=std::get<2>(result);
     swapedElement=std::get<2>(tuple);
 
+    //printMap("deletes po swapach",deleted_lines);
+    //printMap("adds po swapach",added_lines);
+    std::cout<<"swapy"<<std::endl;
+    printIdenticalElements(swapedElement);
+
     return std::make_tuple(added_lines,deleted_lines,swapedElement,modifications);
     //tutaj troche poprawi to dodawanie do tuple
 
     }
-/*
+
 int main(){
 
     
@@ -414,7 +441,7 @@ int main(){
 
 
 
-
+/*
 int main() {
 
     std::string file1="file1.txt";
@@ -496,8 +523,8 @@ int main() {
     return 0;
 }
 
-*/
 
+*/
 //sprawdzenie czy pliki identyczne?
 
 
