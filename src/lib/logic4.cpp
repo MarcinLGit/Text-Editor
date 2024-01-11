@@ -371,7 +371,7 @@ std::tuple<std::map<int, std::string>,
     //tutaj troche poprawi to dodawanie do tuple
 
     }
-
+/*
 int main(){
 
     
@@ -414,7 +414,7 @@ int main(){
 
 
 
-/*
+
 int main() {
 
     std::string file1="file1.txt";
