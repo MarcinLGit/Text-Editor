@@ -1,9 +1,9 @@
 #define BOOST_TEST_MODULE ComparationTests
 #include <boost/test/included/unit_test.hpp>
 #include <fstream>
-#include "../src/lib/lcs.h" 
-#include "../src/lib/leven.h" 
-#include "../src/lib/logic4.h" 
+#include "../src/lcs.h" 
+#include "../src/leven.h" 
+#include "../src/logic4.h" 
 
 
 BOOST_AUTO_TEST_CASE(test_file_exists) {

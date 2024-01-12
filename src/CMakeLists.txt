@@ -2,13 +2,24 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 
+
+#include_directories(lib)
+#link_directories(lib)
+#add_subdirectory(lib)
+
 set(TS_FILES ZPR_pl_PL.ts)
 
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
-        mainwindow.ui
+        mainwindow.ui 
+        lcs.h
+        leven.h
+        leven.cpp
+        lcs.cpp
+        logic4.h
+        logic4.cpp
         ${TS_FILES}
 )
 
@@ -38,5 +49,3 @@ install(TARGETS ZPR
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(ZPR)
 endif()
-
-add_subdirectory(lib)
