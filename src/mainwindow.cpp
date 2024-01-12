@@ -8,9 +8,6 @@
 #include "QHBoxLayout"
 #include "logic4.h"
 #include "QTextBlock"
-#include <iostream>
-#include <vector>
-#include <map>
 
 const qint64 MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -18,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow){
     ui->setupUi(this);
-
 
     left_saved = true;
     connect(ui->actionOpenLeft, &QAction::triggered,this, &MainWindow::openFileLeft);
@@ -30,34 +26,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionSaveRight, &QAction::triggered,this, &MainWindow::saveFileRight);
     connect(ui->actionSaveAsRight, &QAction::triggered,this, &MainWindow::saveFileAsRight);
 
-
     newFileLeft();
     left_saved = true;
     newFileRight();
     right_saved = false;
 
-    QColor lightBlue(173, 216, 230);
-    static QString colorOfModification = QString("background-color: %1").arg(lightBlue.name());
-    QColor brightGreen(0, 255, 0);
-    static QString colorOfNewLine = QString("background-color: %1").arg(brightGreen.name());
-    QColor GreenSwapped(100, 255, 100);
-    static QString colorOfSwapped = QString("background-color: %1").arg(GreenSwapped.name());
-
     QString buttonTextCompare = tr("Compare");
     QPushButton* buttonCompare;
     buttonCompare = new QPushButton(buttonTextCompare);
-    //ui->tableWidget->setCellWidget(1,0,(QWidget*)buttonSwitchedLines);
 
     ui->verticalLayout->addWidget(buttonCompare);
-    QObject::connect(buttonCompare, &QPushButton::clicked, this, &MainWindow::colorLines);
-
-    //layout->insertRow(0, button2);
-    //for(int i = 0; i<17; ++i){
-    //   QString buttonText = tr("Button: #%1").arg(i);
-    //   QPushButton* button2;
-    //   button2 = new QPushButton(buttonText);
-    //   ui->tableWidget->setCellWidget(i,0,(QWidget*)button2);
-    //}
+    connect(buttonCompare, &QPushButton::clicked, this, &MainWindow::colorLines);
 
 }
 
@@ -83,46 +62,9 @@ void MainWindow::setBlockColor(QTextDocument* txtDocument, QTextCursor& cursorTe
 
 }
 
-
-void MainWindow::switchLinesFromLeftToRight(QPlainTextEdit* textEditorLeft, QPlainTextEdit* textEditorRight, int lineNumber){
-    // Get the document from both text editors
-    QTextDocument* docLeft = textEditorLeft->document();
-    QTextDocument* docRight = textEditorRight->document();
-
-    // Create cursors for both documents
-    QTextCursor cursorLeft(docLeft);
-    QTextCursor cursorRight(docRight);
-
-    // Move both cursors to the start of the document
-    //cursorLeft.movePosition(QTextCursor::Start);
-    //cursorRight.movePosition(QTextCursor::Start);
-
-    QTextBlock blockLeft = docLeft->findBlockByLineNumber(lineNumber);
-    QTextBlock blockRight = docRight->findBlockByLineNumber(lineNumber);
-    cursorLeft.setPosition(blockLeft.position(), QTextCursor::MoveAnchor);
-    cursorLeft.setPosition(blockLeft.position(), QTextCursor::KeepAnchor);
-    //blockRight.setPosition(blockRight.position(), QTextCursor::MoveAnchor);
-   // blockRight.setPosition(blockRight.position(), QTextCursor::KeepAnchor);
-    //blockRight.ser
-    // Store the text from the left line
-   // QString lineText = cursorLeft.block().text();
-
-    // Remove the line from the left editor
-   //cursorLeft.removeSelectedText();
-
-    // Insert the line into the right editor
-   // cursorRight.insertText(lineText);
-}
-
-
 void MainWindow::colorSwitchedLines(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight){
     QTextBlockFormat backgroundClear;
     backgroundClear.clearBackground();
-
-    for (const auto& pair : switchedLines) {
-        std::cout << "Usunięcie" << pair.first << ", Zawartosc " << pair.second << std::endl; //TODELETE
-    }
-
     for (const auto& pair: switchedLines) {
         setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundClear, pair.first);
         setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundClear, pair.second);
@@ -134,30 +76,73 @@ void MainWindow::colorSwitchedLines(QTextCursor& cursorTextLeft, QTextCursor& cu
     backgroundColor.setBackground(lightRed);
 
     switchedLines = std::get<2>(resultOfTxtCompare);
-    for (const auto& pair : switchedLines) {
-        std::cout << "Test: " << pair.first << ", Zawartosc " << pair.second << std::endl; //TODELETE
-    }
-
     for (const auto& pair: switchedLines) {
         setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundColor, pair.first);
         setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundColor, pair.second);
     }
 }
 
+/**
+ * @brief MainWindow::colorAddedLines Kolorowanie dodanych lini
+ * @param cursorTextLeft
+ * @param cursorTextRight
+ */
+void MainWindow::colorAddedLines(QTextCursor &cursorTextLeft, QTextCursor &cursorTextRight)
+{
+    QTextBlockFormat backgroundClear;
+    backgroundClear.clearBackground();
+
+    for (const auto& pair: addedLines) {
+        setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundClear, pair.first);
+    }
+
+    QColor lightRed(0, 255, 50);
+    QTextBlockFormat backgroundColor;
+    backgroundColor.setBackground(lightRed);
+
+    addedLines = std::get<0>(resultOfTxtCompare);
+    for (const auto& pair: addedLines) {
+        setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundColor, pair.first);
+    }
+}
+
+/**
+ * @brief MainWindow::colorDeletedLines Koloruje usuniete pliki
+ * @param cursorTextLeft
+ * @param cursorTextRight
+ */
+void MainWindow::colorDeletedLines(QTextCursor &cursorTextLeft, QTextCursor &cursorTextRight)
+{
+    QTextBlockFormat backgroundClear;
+    backgroundClear.clearBackground();
+    for (const auto& pair: deletedLines) {
+        setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundClear, pair.first);
+    }
+
+    QColor lightRed(255, 0, 50);
+    QTextBlockFormat backgroundColor;
+    backgroundColor.setBackground(lightRed);
+
+    deletedLines = std::get<1>(resultOfTxtCompare);
+    for (const auto& pair: deletedLines) {
+        setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundColor, pair.first);
+    }
+}
+
+/**
+ * @brief MainWindow::colorModifications koloruje modyfikacjew kodzie.
+ *
+ * @param cursorTextLeft
+ * @param cursorTextRight
+ */
 void MainWindow::colorModifications(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight){
-  //  QTextCursor cursorTextLeft(ui->plainTextEdit->document());
-   // QTextCursor cursorTextRight(ui->plainTextEditRight->document());
-
-
     QTextBlockFormat backgroundClear;
     backgroundClear.clearBackground();
 
     for(const int lineNum : modifications){
-        std::cout << lineNum << std::endl;
         setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundClear, lineNum);
         setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundClear, lineNum);
     }
-
 
     QColor lightBlue(173, 216, 230);
     QTextBlockFormat backgroundColor;
@@ -165,7 +150,6 @@ void MainWindow::colorModifications(QTextCursor& cursorTextLeft, QTextCursor& cu
 
     modifications = std::get<3>(resultOfTxtCompare);
     for(const int lineNum : modifications){
-        std::cout << lineNum << std::endl;
         setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundColor, lineNum);
         setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundColor, lineNum);
     }
@@ -178,9 +162,28 @@ void MainWindow::colorModifications(QTextCursor& cursorTextLeft, QTextCursor& cu
  * Wyniki operacji są zapisywane i wykorzystywane w uruchamianiu funkcji colorModifications i colorSwitchedLines.
  */
 void MainWindow::colorLines(){
-    resultOfTxtCompare = mainFunction(filename.toUtf8().constData(), right_filename.toUtf8().constData());
+
     QTextCursor cursorTextLeft(ui->plainTextEdit->document());
     QTextCursor cursorTextRight(ui->plainTextEditRight->document());
+
+    std::vector<std::string> leftVec;
+    std::vector<std::string> rightVec;
+    QTextDocument *docleft = ui->plainTextEdit->document();
+    QTextDocument *docRight = ui->plainTextEditRight->document();
+
+
+    for (QTextBlock it = docleft->begin(); it != docleft->end(); it = it.next())
+        leftVec.push_back(it.text().toUtf8().toStdString());
+
+    for (QTextBlock it = docRight->begin(); it != docRight->end(); it = it.next()){
+        rightVec.push_back(it.text().toUtf8().toStdString());
+    }
+    files = {leftVec, rightVec};
+
+
+    resultOfTxtCompare = mainFunction(leftVec, rightVec);
+    colorAddedLines(cursorTextLeft, cursorTextRight);
+    colorDeletedLines(cursorTextLeft, cursorTextRight);
     colorModifications(cursorTextLeft, cursorTextRight);
     colorSwitchedLines(cursorTextLeft, cursorTextRight);
 }
@@ -194,8 +197,6 @@ void MainWindow::newFileLeft(){
     filename.clear();
     left_saved = false;
     ui->statusbar->showMessage("New File");
-
-
 }
 
 /**
@@ -255,7 +256,7 @@ void MainWindow::saveFileLeft(){
 
 
     QTextStream stream(&file);
-    std::cout << stream.encoding();
+    stream.setEncoding(QStringConverter::Utf8);
     stream << ui->plainTextEdit->toPlainText();
     file.close();
 
@@ -340,6 +341,7 @@ void MainWindow::saveFileRight(){
     }
 
     QTextStream stream(&file);
+    stream.setEncoding(QStringConverter::Utf8);
     stream << ui->plainTextEditRight->toPlainText();
     file.close();
 

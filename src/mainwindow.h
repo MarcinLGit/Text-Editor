@@ -13,6 +13,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QPlainTextEdit>
+#include <stdio.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -59,24 +60,29 @@ private:
     QString right_filename;
     bool right_saved;
 
+    std::pair<std::vector<std::string>, std::vector<std::string>> files;
+
     // Variables storing values for coloring
     std::tuple<std::map<int, std::string>,
                std::map<int, std::string>,
                std::vector<std::pair<int, int>>,
                std::vector<int>> resultOfTxtCompare;
 
+    std::map<int, std::string> deletedLines;
+    std::map<int, std::string> addedLines;
     std::vector<std::pair<int, int>> switchedLines;
-    std::map<int, std::string> deleted_lines;
     std::vector<int> modifications;
 
-    static QString colorOfModification;
-    static QString colorOfSwitchedLines;
-
+    std::vector<int> coloredBlocks;
     void colorModifications(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight);
     void colorSwitchedLines(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight);
-    //void colorDeletedLines();
-    void switchLinesFromLeftToRight(QPlainTextEdit* textEditorLeft, QPlainTextEdit* textEditorRight, int lineNumber);
+    void colorAddedLines(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight);
+    void colorDeletedLines(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight);
+
     void setBlockColor(QTextDocument *txtDocument, QTextCursor &cursorTextLeft, QTextBlockFormat backgroundColor, int lineNumber);
+
+    void ColorDiffChars();
+
 
 };
 #endif // MAINWINDOW_H
