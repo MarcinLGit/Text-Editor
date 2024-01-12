@@ -284,8 +284,8 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<i
     }
 
          for (const auto& kv : deleted_file_one_indexes) {
-                double percentage = levenshteinPercentage(kv.second,added_file_two_indexes[kv.first] );
-            if (percentage < 90) { 
+                double percentage = lcsPercentage(kv.second,added_file_two_indexes[kv.first] );
+            if (percentage > 85) { 
                 modifications.push_back(kv.first);
                 keysToDeleteInMap.push_back(kv.first);
                 

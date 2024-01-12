@@ -39,6 +39,23 @@
         return lcs;
     }
 
+
+   double lcsPercentage(const std::string &s1, const std::string &s2) {
+    
+    std::string s1_copy = s1;
+    std::string s2_copy = s2;
+
+    std::vector<char> lcs = fill_dyn_matrix(s1_copy, s2_copy);
+
+    int lcsLength = lcs.size();
+    int maxLength = std::max(s1.length(), s2.length());
+
+    if (maxLength == 0) return 0.0; 
+
+    return 100.0 * lcsLength / maxLength;
+}
+
+
 /*
 int main() {
     std::string x = "AGGTAB";
