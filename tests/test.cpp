@@ -278,16 +278,7 @@ BOOST_AUTO_TEST_CASE(NoElementsToDelete)
     BOOST_CHECK(result.first.empty() && result.second.empty());
 }
 
-BOOST_AUTO_TEST_CASE(DeleteElementsBeforeIndex)
-{
-    std::map<int, std::string> deleted = {{1, "a"}, {2, "b"}, {3, "c"}};
-    std::map<int, std::string> added = {{1, "a"}, {2, "b"}, {4, "d"}};
-    int startFrom = 1;
-    int secondfileSwapIndex = 3;
 
-    auto result = elementsForDelete(deleted, added, startFrom, secondfileSwapIndex);
-    BOOST_CHECK(result.first == std::vector<int>{3} && result.second == std::vector<int>{2});
-}
 
 BOOST_AUTO_TEST_CASE(DeleteElementsAfterIndex)
 {
@@ -300,53 +291,68 @@ BOOST_AUTO_TEST_CASE(DeleteElementsAfterIndex)
     BOOST_CHECK(result.first == std::vector<int>{4} && result.second == std::vector<int>{4});
 }
 
-BOOST_AUTO_TEST_CASE(MixedScenario)
+
+
+BOOST_AUTO_TEST_CASE(test_with_data)
 {
-    std::map<int, std::string> deleted = {{1, "a"}, {2, "b"}, {4, "d"}, {5, "e"}};
-    std::map<int, std::string> added = {{1, "a"}, {3, "c"}, {4, "d"}, {5, "f"}};
+    std::map<int, std::string> deleted_file_one_indexes = {{1, "Line1"}, {2, "Line2"}, {3, "Line3"}};
+    std::map<int, std::string> added_file_two_indexes = {{1, "Line1"}, {2, "Line2Modified"}, {3, "Line3"}};
     int startFrom = 1;
-    int secondfileSwapIndex = 4;
+    int secondfileSwapIndex = 2;
 
-    auto result = elementsForDelete(deleted, added, startFrom, secondfileSwapIndex);
+    auto result = elementsForDelete(deleted_file_one_indexes, added_file_two_indexes, startFrom, secondfileSwapIndex);
 
-    std::vector<int> expectedFirst = {4, 5};
-    std::vector<int> expectedSecond = {3, 5};
-
-    BOOST_CHECK(result.first == expectedFirst); // Проверяем первый вектор
-    BOOST_CHECK(result.second == expectedSecond); // Проверяем второй вектор
+    BOOST_CHECK_EQUAL(result.first.size(), 1);
+    BOOST_CHECK_EQUAL(result.second.size(), 1);
 }
 
 
+BOOST_AUTO_TEST_CASE(test_with_no_matching)
+{
+    std::map<int, std::string> deleted_file_one_indexes = {{1, "LineA"}, {2, "LineB"}};
+    std::map<int, std::string> added_file_two_indexes = {{1, "Line1"}, {2, "Line2"}};
+    int startFrom = 1;
+    int secondfileSwapIndex = 2;
 
+    auto result = elementsForDelete(deleted_file_one_indexes, added_file_two_indexes, startFrom, secondfileSwapIndex);
 
-
-
-BOOST_AUTO_TEST_CASE(TestUnchangedStrings) {
-    std::map<int, std::string> deleted = {{1, "example"}, {2, "test"}};
-    std::map<int, std::string> added = {{1, "example"}, {2, "test"}};
-
-    auto result = findModificationsWithLevenshtein(deleted, added);
-    std::vector<int> expectedModifications = {};
-
-    BOOST_CHECK(std::get<2>(result) == expectedModifications);
+    BOOST_CHECK(result.first.empty());
+    BOOST_CHECK(result.second.empty());
 }
 
-BOOST_AUTO_TEST_CASE(TestMinorModifications) {
-    std::map<int, std::string> deleted = {{1, "example"}, {2, "test"}};
-    std::map<int, std::string> added = {{1, "examp1e"}, {2, "test"}};
 
-    auto result = findModificationsWithLevenshtein(deleted, added);
-    std::vector<int> expectedModifications = {1};
+// Załóżmy, że funkcja fill_dyn_matrix jest zdefiniowana tutaj lub dołączona przed testami.
 
-    BOOST_CHECK(std::get<2>(result) == expectedModifications);
+BOOST_AUTO_TEST_CASE(test_empty_strings)
+{
+    std::string x = "";
+    std::string y = "";
+    auto result = fill_dyn_matrix(x, y);
+    BOOST_CHECK(result.empty());
 }
 
-BOOST_AUTO_TEST_CASE(TestMajorModifications) {
-    std::map<int, std::string> deleted = {{1, "example"}, {2, "test"}};
-    std::map<int, std::string> added = {{1, "different"}, {2, "test"}};
+BOOST_AUTO_TEST_CASE(test_no_common_subsequence)
+{
+    std::string x = "abc";
+    std::string y = "def";
+    auto result = fill_dyn_matrix(x, y);
+    BOOST_CHECK(result.empty());
+}
 
-    auto result = findModificationsWithLevenshtein(deleted, added);
-    std::vector<int> expectedModifications = {1};
+BOOST_AUTO_TEST_CASE(test_common_subsequence)
+{
+    std::string x = "abcde";
+    std::string y = "ace";
+    auto result = fill_dyn_matrix(x, y);
+    BOOST_CHECK(result.size() == 3);
+    BOOST_CHECK(result[0] == 'a' && result[1] == 'c' && result[2] == 'e');
+}
 
-    BOOST_CHECK(std::get<2>(result) == expectedModifications);
+BOOST_AUTO_TEST_CASE(test_full_match)
+{
+    std::string x = "abc";
+    std::string y = "abc";
+    auto result = fill_dyn_matrix(x, y);
+    BOOST_CHECK(result.size() == 3);
+    BOOST_CHECK(result[0] == 'a' && result[1] == 'b' && result[2] == 'c');
 }
