@@ -321,8 +321,6 @@ BOOST_AUTO_TEST_CASE(test_with_no_matching)
 }
 
 
-// Załóżmy, że funkcja fill_dyn_matrix jest zdefiniowana tutaj lub dołączona przed testami.
-
 BOOST_AUTO_TEST_CASE(test_empty_strings)
 {
     std::string x = "";
@@ -355,4 +353,49 @@ BOOST_AUTO_TEST_CASE(test_full_match)
     auto result = fill_dyn_matrix(x, y);
     BOOST_CHECK(result.size() == 3);
     BOOST_CHECK(result[0] == 'a' && result[1] == 'b' && result[2] == 'c');
+}
+
+
+
+BOOST_AUTO_TEST_CASE(test_no_common_subsequence_procent)
+{
+    std::string x = "abc";
+    std::string y = "def";
+    double result = lcsPercentage(x, y);
+    BOOST_CHECK_EQUAL(result, 0.0);
+}
+
+
+BOOST_AUTO_TEST_CASE(test_common_subsequence_procent)
+{
+    std::string x = "abcde";
+    std::string y = "ace";
+    double result = lcsPercentage(x, y);
+    BOOST_CHECK_CLOSE(result, 60.0, 0.01); // 'ace' is 60% of 'abcde'
+}
+
+
+BOOST_AUTO_TEST_CASE(test_full_match_procent)
+{
+    std::string x = "abc";
+    std::string y = "abc";
+    double result = lcsPercentage(x,
+y);
+BOOST_CHECK_EQUAL(result, 100.0); // Full match should return 100%
+}
+
+BOOST_AUTO_TEST_CASE(test_partial_match_procent)
+{
+std::string x = "abcdef";
+std::string y = "abc";
+double result = lcsPercentage(x, y);
+BOOST_CHECK_CLOSE(result, 50.0, 0.01); // 'abc' is 50% of 'abcdef'
+}
+
+BOOST_AUTO_TEST_CASE(test_different_length_strings_proces)
+{
+std::string x = "abcd";
+std::string y = "bc";
+double result = lcsPercentage(x, y);
+BOOST_CHECK_CLOSE(result, 50.0, 0.01); // 'bc' is 50% of 'abcd'
 }
