@@ -3,9 +3,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 
 
-#include_directories(lib)
-#link_directories(lib)
-#add_subdirectory(lib)
+
 
 set(TS_FILES ZPR_pl_PL.ts)
 

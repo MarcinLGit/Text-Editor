@@ -25,5 +25,5 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<s
 std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>> findModificationsWithLevenshtein(std::map<int, std::string>& deleted_file_one_indexes, std::map<int, std::string>& added_file_two_indexes);
 std::tuple<std::map<int, std::string>,std::map<int, std::string>,std::vector<std::pair<int, int>>,std::vector<int>> mainFunction(std::vector<std::string>& lines_file1, std::vector<std::string>& lines_file2);
 #endif // FILE_COMPARISON_UTILS_H
-/
+
 // wywali printowanie zrobic tylko logike
