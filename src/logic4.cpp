@@ -10,36 +10,6 @@
 #include <algorithm>
 #include <map>
 
-//sprawdzenie czy plik istnieje
-bool fileExists(const std::string& filePath) {
-    std::ifstream file(filePath);
-    return file.good();
-}
-
-//sprawdzenie czy 2 pliki istnieją
-bool files_exist(const std::string& firstFilePath, const std::string& secondFilePath) {
-    bool first_file_exist = fileExists(firstFilePath);
-    bool second_file_exist = fileExists(secondFilePath);
-
-    if(!first_file_exist || !second_file_exist){
-        std::cerr << "Error: plik nie istnieje" << std::endl;
-        return false;
-    }
-    return true;
-}
-
-//wczytywanie plików
-void read_file(const std::string& file_name, std::vector<std::string>& lines) { //++
-    std::ifstream file(file_name);
-    std::string line;
-    while (std::getline(file, line)) {
-        lines.push_back(line);
-    }
-}
-
-
-
-
 
 //porównuje i zwraca  hashmap z numerem linijki i zawartoscą plików
 std::map<int, std::pair<std::string, std::string>>
@@ -68,6 +38,7 @@ compare(const std::vector<std::string>& vec1, const std::vector<std::string>& ve
 }
 
 
+
 //szuka substringi w lcs zwraca różnicy
 std::map<int, std::string> findAddDel(const std::string& lcs, const std::map<int, std::string>& mapa) { //++
 
@@ -81,6 +52,7 @@ std::map<int, std::string> findAddDel(const std::string& lcs, const std::map<int
 
     return notFoundSubstrings;
 }
+
 
 //funkcja dla threadsów
 void threadFunction(const std::string& lcs, const std::map<int, std::string>& mapa,
@@ -111,18 +83,8 @@ convert_to_two_hashmaps_and_strings(const std::map<int, std::pair<std::string, s
 }
 
 
-// metoda dla wypisywania
-void printMap(const std::string& title, const std::map<int, std::string>& mapa) {
-    std::cout << title << std::endl;
-    for (const auto& pair : mapa) {
-        std::cout << "Indeks: " << pair.first << ", Zawartosc " << pair.second << std::endl;
-    }
-}
 
-
-
-
-template <typename K, typename V>
+template <typename K, typename V> // modzna uzyc std::views
 std::vector<K> getKeys(const std::map<K, V>& map) {
     std::vector<K> keys;
     for (const auto& kv : map) {
@@ -130,6 +92,8 @@ std::vector<K> getKeys(const std::map<K, V>& map) {
     }
     return keys;
 }
+
+
 
 std::vector<std::pair<int, int>> swapedElement;
 
@@ -189,6 +153,9 @@ std::pair<std::vector<int>,std::vector<int>> elementsForDelete(
 
 }
 
+
+
+
 void printIdenticalElements(const std::vector<std::pair<int, int>>& identicalElements) {
     for (const auto& elem : identicalElements) {
         std::cout << "Key 1: " << elem.first << ", Key 2: " << elem.second << std::endl;
@@ -245,22 +212,8 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<s
 }
 
 
-//
 
-
-
-template <typename K, typename V>
-std::map<K, V> unorderedMapToMap(const std::map<K, V>& unorderedMap) {
-    std::map<K, V> orderedMap;
-    for (const auto& kv : unorderedMap) {
-        orderedMap.insert(kv);
-    }
-    return orderedMap;
-}
-
-
-
-//tutaj tez pytanie czy wyszukiwac modyfikacje tylko w odpowiednich linijach czy razem z zamiana
+//pytanie czy wyszukiwac modyfikacje tylko w odpowiednich linijach czy razem z zamiana
 //zrobiono jak w meld
 std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>>  findModificationsWithLevenshtein(
     std::map<int, std::string>& deleted_file_one_indexes,
@@ -298,9 +251,6 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<i
 
 
 
-
-
-
 std::tuple<std::map<int, std::string>,
            std::map<int, std::string>,
            std::vector<std::pair<int, int>>,
@@ -327,7 +277,7 @@ std::tuple<std::map<int, std::string>,
 
     std::string lcss(lcs_vector.begin(), lcs_vector.end());
 
-    //printMap("only  differences ",first_file_differences_hashmap);
+  
 
     std::map<int, std::string>  result1;
     std::map<int, std::string>  result2;
@@ -343,9 +293,7 @@ std::tuple<std::map<int, std::string>,
     std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<std::pair<int, int>>> tuple;
     std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>> result;
 
-    //printMap("deletes ",result1);
-    // printMap("adds",result2);
-
+   
 
     tuple=findSwaps(result1,result2,swapedElement,tuple);
 
@@ -353,12 +301,6 @@ std::tuple<std::map<int, std::string>,
     deleted_lines= std::get<0>(tuple);
     added_lines= std::get<1>(tuple);
     swapedElement = std::get<2>(tuple);
-
-
-    // printMap("deletes po swapach",deleted_lines);
-    //printMap("adds po swapach",added_lines);
-    // std::cout<<"swapy"<<std::endl;
-    //printIdenticalElements(swapedElement);
 
 
     std::cout<<"po wyszukiwaniu modyfikacji"<<std::endl;
@@ -370,12 +312,11 @@ std::tuple<std::map<int, std::string>,
     modifications=std::get<2>(result);
     swapedElement=std::get<2>(tuple);
 
-    //printMap("deletes po swapach",deleted_lines);
-    //printMap("adds po swapach",added_lines);
+   
     std::cout<<"swapy"<<std::endl;
     printIdenticalElements(swapedElement);
 
     return std::make_tuple(added_lines,deleted_lines,swapedElement,modifications);
-    //tutaj troche poprawi to dodawanie do tuple
+    
 
 }

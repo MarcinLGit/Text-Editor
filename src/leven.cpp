@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm> // Для std::min
+#include <algorithm> 
 
 int levenshteinDistance(const std::string &s1, const std::string &s2) {
     int m = s1.length(), n = s2.length();
@@ -26,14 +26,6 @@ int levenshteinDistance(const std::string &s1, const std::string &s2) {
 }
 
 
-/*
-int main() {
-    std::string str1 = "kot";
-    std::string str2 = "skatr";
-    std::cout << "Levenshtein Distance: " << levenshteinDistance(str1, str2) << std::endl;
-    return 0;
-}*/
-
 
 double levenshteinPercentage(const std::string &s1, const std::string &s2) {
     int distance = levenshteinDistance(s1, s2);
@@ -44,14 +36,4 @@ double levenshteinPercentage(const std::string &s1, const std::string &s2) {
 
     return 100.0 * distance / maxLength;
 }
-/*
-int main() {
-    std::string str1 = "example";
-    std::string str2 = "samples";
 
-    std::cout << "Levenshtein Distance: " << levenshteinDistance(str1, str2) << std::endl;
-    std::cout << "Percentage: " << levenshteinPercentage(str1, str2) << "%" << std::endl;
-
-    return 0;
-}
-*/

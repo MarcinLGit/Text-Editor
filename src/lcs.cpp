@@ -56,15 +56,3 @@
 }
 
 
-/*
-int main() {
-    std::string x = "AGGTAB";
-    std::string y = "GXTXAYB";
-    std::vector<char> lcs = LCS::fill_dyn_matrix(x, y);
-    for (char c : lcs) {
-        std::cout << c;
-    }
-    std::cout << std::endl;
-    return 0;
-}
-*/
