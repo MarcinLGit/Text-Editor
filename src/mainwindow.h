@@ -37,8 +37,7 @@ private slots:
 
 
     void colorLines();
-    //void colorSwitchedLines();
-    //void colorDeletedLines();
+    void deleteDeletedLine();
 
     void newFileLeft();
     void openFileLeft();
@@ -62,7 +61,7 @@ private:
 
     std::pair<std::vector<std::string>, std::vector<std::string>> files;
 
-    // Variables storing values for coloring
+    // Variable storing values for coloring
     std::tuple<std::map<int, std::string>,
                std::map<int, std::string>,
                std::vector<std::pair<int, int>>,
@@ -80,9 +79,5 @@ private:
     void colorDeletedLines(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight);
 
     void setBlockColor(QTextDocument *txtDocument, QTextCursor &cursorTextLeft, QTextBlockFormat backgroundColor, int lineNumber);
-
-    void ColorDiffChars();
-
-
 };
 #endif // MAINWINDOW_H
