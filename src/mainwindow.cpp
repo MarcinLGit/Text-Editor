@@ -218,7 +218,7 @@ void MainWindow::colorSwitchedLines(QTextCursor& cursorTextLeft, QTextCursor& cu
         if(pair.first){
             ui->tableButtons->setRowHeight(0, 25);
         }
-        connect(buttonSwappingLines, SIGNAL(clicked()), this, SLOT(moveSwapedLine()));
+        connect(buttonSwappingLines, SIGNAL(clicked()), this, SLOT(moveSwappedLine()));
     }
 
 }
