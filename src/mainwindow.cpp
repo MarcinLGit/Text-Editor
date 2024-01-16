@@ -9,7 +9,8 @@
 #include "logic4.h"
 #include "QTextBlock"
 #include <stdio.h>
-#include<QDebug>
+#include <QDebug>
+#include <QScrollBar>
 const qint64 MAX_FILE_SIZE = 2 * 1024 * 1024;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -37,8 +38,25 @@ MainWindow::MainWindow(QWidget *parent)
     buttonCompare = new QPushButton(buttonTextCompare);
     ui->verticalLayout->addWidget(buttonCompare);
     connect(buttonCompare, &QPushButton::clicked, this, &MainWindow::colorLines);
-    ui->tableButtons->horizontalHeader()->setDefaultSectionSize(30);
-    ui->tableButtons->verticalHeader()->setDefaultSectionSize(20);
+
+    ui->tableButtons->horizontalHeader()->setDefaultSectionSize(25);
+    ui->tableButtons->verticalHeader()->setDefaultSectionSize(15);
+    // 30 20
+    // synchronizacja skrolowania
+    connect(ui->plainTextEdit->verticalScrollBar(), &QScrollBar::valueChanged,
+            ui->plainTextEditRight->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->plainTextEditRight->verticalScrollBar(), &QScrollBar::valueChanged,
+            ui->plainTextEdit->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->plainTextEdit->verticalScrollBar(), &QScrollBar::valueChanged,
+            ui->tableButtons->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->plainTextEditRight->verticalScrollBar(), &QScrollBar::valueChanged,
+            ui->tableButtons->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->tableButtons->verticalScrollBar(), &QScrollBar::valueChanged,
+            ui->plainTextEditRight->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->tableButtons->verticalScrollBar(), &QScrollBar::valueChanged,
+            ui->plainTextEdit->verticalScrollBar(), &QScrollBar::setValue);
+
+    backgroundClear.clearBackground();
 
 }
 
@@ -49,7 +67,7 @@ MainWindow::~MainWindow(){
 /**
  * @brief Ustawienie koloru linii
  *
- * Funkcja pomagająca w kolorwaniu różnic w tekscie bazując na numerach lini.
+ * Funkcja odpowaiada za kolorwanie różnic w tekście.
  *
  * @param txtDocument Wskaźnik do document
  * @param cursorText Przekazanie kursora tekstu
@@ -66,7 +84,6 @@ void MainWindow::setBlockColor(QTextDocument* txtDocument, QTextCursor& cursorTe
 
 void MainWindow::deleteDeletedLine(){
     QPushButton *button = (QPushButton *)sender();
-
     int lineNumber = button->text().toUtf8().toInt();
 
     QTextBlock blockToDelete = ui->plainTextEdit->document()->findBlockByLineNumber(lineNumber);
@@ -74,10 +91,58 @@ void MainWindow::deleteDeletedLine(){
     cursorTextLeft.setPosition(blockToDelete.position(), QTextCursor::MoveAnchor);
     cursorTextLeft.setPosition(blockToDelete.position()+blockToDelete.length(), QTextCursor::KeepAnchor);
     cursorTextLeft.removeSelectedText();
-    qInfo() << lineNumber;
+
+    delete button;
+    colorLines();
+}
+
+void MainWindow::moveSwapedLine(QTextDocument* leftDoc, QTextDocument* rightDoc){
+    QPushButton *button = (QPushButton *)sender();
+    const QStringList btnTxt = button->text().split(':');
+    const std::pair<int, int> lineNums = {btnTxt.at(0).toUtf8().toInt(), btnTxt.at(1).toUtf8().toInt()};
+
+    QTextBlock blockToSwapLeft = leftDoc->findBlockByLineNumber(lineNums.first);
+    QTextBlock blockToSwapRight = rightDoc->findBlockByLineNumber(lineNums.second);
+    QTextCursor cursorTextLeft(leftDoc);
+
+    cursorTextLeft.setPosition(blockToSwapLeft.position(), QTextCursor::MoveAnchor);
+    cursorTextLeft.setPosition(blockToSwapLeft.position()+blockToSwapLeft.length(), QTextCursor::KeepAnchor);
+    cursorTextLeft.removeSelectedText();
+
+    cursorTextLeft.setPosition(blockToSwapRight.position(), QTextCursor::MoveAnchor);
+    cursorTextLeft.setPosition(blockToSwapRight.position()+blockToSwapRight.length(), QTextCursor::KeepAnchor);
+    cursorTextLeft.insertBlock();
+    cursorTextLeft.selectedText() = blockToSwapRight.text();
 
 }
 
+/**
+ * @brief MainWindow::moveSwapedLine Zamiana miejsca linijki wykrytej jako swapped.
+ */
+void MainWindow::moveSwappedLine(){
+    QTextDocument* leftDoc = ui->plainTextEdit->document();
+    QTextDocument* rightDoc = ui->plainTextEditRight->document();
+    QPushButton *button = (QPushButton *)sender();
+    const QStringList btnTxt = button->text().split(':');
+    const std::pair<int, int> lineNums = {btnTxt.at(0).toUtf8().toInt(), btnTxt.at(1).toUtf8().toInt()};
+
+    QTextBlock blockToSwapLeft = leftDoc->findBlockByLineNumber(lineNums.first);
+    QTextBlock blockToSwapRight = rightDoc->findBlockByLineNumber(lineNums.second);
+    QTextCursor cursorTextLeft(leftDoc);
+
+    cursorTextLeft.setPosition(blockToSwapLeft.position(), QTextCursor::MoveAnchor);
+    cursorTextLeft.setPosition(blockToSwapLeft.position()+blockToSwapLeft.length(), QTextCursor::KeepAnchor);
+    cursorTextLeft.removeSelectedText();
+
+    cursorTextLeft.setPosition(blockToSwapRight.position(), QTextCursor::MoveAnchor);
+    cursorTextLeft.setPosition(blockToSwapRight.position(), QTextCursor::KeepAnchor);
+    cursorTextLeft.insertText(blockToSwapRight.text() + "\n");
+
+    QTextCursor cursorTextRight(rightDoc);
+    setBlockColor(rightDoc, cursorTextRight, backgroundClear, lineNums.second);
+    delete button;
+    colorLines();
+}
 
 /**
  * @brief Funkcja kolorująca różnice w plikach
@@ -102,11 +167,20 @@ void MainWindow::colorLines(){
     for (QTextBlock it = docRight->begin(); it != docRight->end(); it = it.next()){
         rightVec.push_back(it.text().toUtf8().toStdString());
     }
-    files = {leftVec, rightVec};
 
 
+    //qInfo() << leftVec;
+    //qInfo() << rightVec;               TODELETE
     resultOfTxtCompare = mainFunction(leftVec, rightVec);
-    colorAddedLines(cursorTextLeft, cursorTextRight);
+    // Resetowanie przycisków do łączenia tekstów
+    ui->tableButtons->removeColumn(0);
+    ui->tableButtons->removeColumn(1);
+    ui->tableButtons->insertColumn(0);
+    ui->tableButtons->insertColumn(1);
+
+    // Przygotowanie rozmiaru tabeli do wstwiania przycików łączących teksty  
+    ui->tableButtons->setRowCount(ui->plainTextEdit->document()->blockCount());
+    colorAddedLines(cursorTextRight);
     colorDeletedLines(cursorTextLeft, cursorTextRight);
     colorModifications(cursorTextLeft, cursorTextRight);
     colorSwitchedLines(cursorTextLeft, cursorTextRight);
@@ -118,22 +192,33 @@ void MainWindow::colorLines(){
  * @param cursorTextRight
  */
 void MainWindow::colorSwitchedLines(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight){
-    QTextBlockFormat backgroundClear;
-    backgroundClear.clearBackground();
+    QTextDocument* leftDoc = ui->plainTextEdit->document();
+    QTextDocument* rightDoc = ui->plainTextEditRight->document();
     for (const auto& pair: switchedLines) {
-        setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundClear, pair.first);
-        setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundClear, pair.second);
+        setBlockColor(leftDoc, cursorTextLeft, backgroundClear, pair.first);
+        setBlockColor(rightDoc, cursorTextRight, backgroundClear, pair.second);
 
     }
 
-    QColor lightRed(246, 246, 120);
+    QColor lightYellow(246, 246, 120);
     QTextBlockFormat backgroundColor;
-    backgroundColor.setBackground(lightRed);
+    backgroundColor.setBackground(lightYellow);
 
     switchedLines = std::get<2>(resultOfTxtCompare);
     for (const auto& pair: switchedLines) {
-        setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundColor, pair.first);
-        setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundColor, pair.second);
+        setBlockColor(leftDoc, cursorTextLeft, backgroundColor, pair.first);
+        setBlockColor(rightDoc, cursorTextRight, backgroundColor, pair.second);
+        //qInfo() << "Switched: \n" << pair.first << ":" << pair.second;
+
+        const QString txt = QString::number(pair.first) + ":" + QString::number(pair.second);
+        QPushButton* buttonSwappingLines;
+        buttonSwappingLines = new QPushButton(txt);
+        buttonSwappingLines->setStyleSheet("background-color:rgb(246, 246, 120);");
+        ui->tableButtons->setCellWidget(pair.first, 0, buttonSwappingLines);
+        if(pair.first){
+            ui->tableButtons->setRowHeight(0, 25);
+        }
+        connect(buttonSwappingLines, SIGNAL(clicked()), this, SLOT(moveSwapedLine()));
     }
 
 }
@@ -143,34 +228,29 @@ void MainWindow::colorSwitchedLines(QTextCursor& cursorTextLeft, QTextCursor& cu
  * @param cursorTextLeft
  * @param cursorTextRight
  */
-void MainWindow::colorAddedLines(QTextCursor &cursorTextLeft, QTextCursor &cursorTextRight)
-{
-    QTextBlockFormat backgroundClear;
-    backgroundClear.clearBackground();
-
+void MainWindow::colorAddedLines(QTextCursor &cursorTextRight){
     for (const auto& pair: addedLines) {
         setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundClear, pair.first);
     }
 
-    QColor lightRed(0, 255, 50);
+    QColor lightGreen(0, 255, 50);
     QTextBlockFormat backgroundColor;
-    backgroundColor.setBackground(lightRed);
+    backgroundColor.setBackground(lightGreen);
 
     addedLines = std::get<0>(resultOfTxtCompare);
     for (const auto& pair: addedLines) {
         setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundColor, pair.first);
+        //qInfo() << "Added: \n" << pair.first << ":" << pair.second;
     }
 }
 
 /**
- * @brief MainWindow::colorDeletedLines Koloruje usuniete linijki
+ * @brief MainWindow::colorDeletedLines Koloruje linijki, które znajdują się w lewym edytorze i nie ma takich linijek w prawym edytorze.
  * @param cursorTextLeft
  * @param cursorTextRight
  */
-void MainWindow::colorDeletedLines(QTextCursor &cursorTextLeft, QTextCursor &cursorTextRight)
-{
-    QTextBlockFormat backgroundClear;
-    backgroundClear.clearBackground();
+void MainWindow::colorDeletedLines(QTextCursor &cursorTextLeft, QTextCursor &cursorTextRight){
+    // Resetowanie kolorów tła
     for (const auto& pair: deletedLines) {
         setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundClear, pair.first);
     }
@@ -181,28 +261,27 @@ void MainWindow::colorDeletedLines(QTextCursor &cursorTextLeft, QTextCursor &cur
 
     deletedLines = std::get<1>(resultOfTxtCompare);
     for (const auto& pair: deletedLines) {
-        setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundColor, pair.first);
+        setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundColor, pair.first);
         QString txt = QString::number(pair.first);
         QPushButton* buttonTableTest;
         buttonTableTest = new QPushButton(txt);
         buttonTableTest->setStyleSheet("background-color: red");
-        ui->tableButtons->setCellWidget(pair.first,0,buttonTableTest);
+        ui->tableButtons->setCellWidget(pair.first, 0, buttonTableTest);
+        if(pair.first){
+            ui->tableButtons->setRowHeight(0, 25);
+        }
         connect(buttonTableTest, SIGNAL(clicked()), this, SLOT(deleteDeletedLine()));
-
-
+        //qInfo() << "Deleted: \n" << pair.first << ":" << pair.second << "\n";
     }
 }
 
 /**
- * @brief MainWindow::colorModifications koloruje modyfikacjew kodzie.
+ * @brief MainWindow::colorModifications koloruje modyfikacje w kodzie.
  *
  * @param cursorTextLeft
  * @param cursorTextRight
  */
 void MainWindow::colorModifications(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight){
-    QTextBlockFormat backgroundClear;
-    backgroundClear.clearBackground();
-
     for(const int lineNum : modifications){
         setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundClear, lineNum);
         setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundClear, lineNum);
@@ -216,6 +295,7 @@ void MainWindow::colorModifications(QTextCursor& cursorTextLeft, QTextCursor& cu
     for(const int lineNum : modifications){
         setBlockColor(ui->plainTextEdit->document(), cursorTextLeft, backgroundColor, lineNum);
         setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundColor, lineNum);
+        //qInfo() << "Modififcations: \n" << lineNum;
     }
 
 }
@@ -263,7 +343,6 @@ void MainWindow::openFileLeft(){
     ui->plainTextEdit->setPlainText(stream.readAll());
     file.close();
 
-    ui->tableButtons->setRowCount(ui->plainTextEdit->document()->blockCount());
     left_saved = true;
     ui->statusbar->showMessage(filename);
 }

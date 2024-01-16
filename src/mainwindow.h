@@ -38,7 +38,8 @@ private slots:
 
     void colorLines();
     void deleteDeletedLine();
-
+    void moveSwapedLine(QTextDocument* leftDoc, QTextDocument* rightDoc);
+    void moveSwappedLine();
     void newFileLeft();
     void openFileLeft();
     void saveFileLeft();
@@ -73,9 +74,10 @@ private:
     std::vector<int> modifications;
 
     std::vector<int> coloredBlocks;
+    QTextBlockFormat backgroundClear;
     void colorModifications(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight);
     void colorSwitchedLines(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight);
-    void colorAddedLines(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight);
+    void colorAddedLines(QTextCursor& cursorTextRight);
     void colorDeletedLines(QTextCursor& cursorTextLeft, QTextCursor& cursorTextRight);
 
     void setBlockColor(QTextDocument *txtDocument, QTextCursor &cursorTextLeft, QTextBlockFormat backgroundColor, int lineNumber);
