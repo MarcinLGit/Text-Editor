@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <map>
 
+const int PROCENTIDENTITY = 85;
 
 //porównuje i zwraca  hashmap z numerem linijki i zawartoscą plików
 std::map<int, std::pair<std::string, std::string>>
@@ -212,7 +213,6 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<s
 }
 
 
-
 //pytanie czy wyszukiwac modyfikacje tylko w odpowiednich linijach czy razem z zamiana
 //zrobiono jak w meld
 std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>>  findModificationsWithLevenshtein(
@@ -222,31 +222,34 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<i
     std::vector<int> modifications;
     std::vector<int> keysToDeleteInMap;
 
-    for (const auto& kv : deleted_file_one_indexes) {
-        std::cout << "Klucz: " << kv.first << std::endl;
-    }
+   
 
     for (const auto& kv : deleted_file_one_indexes) {
+        if(added_file_two_indexes.find(kv.first) == added_file_two_indexes.end()){continue;}
+
+        else{
         double percentage = lcsPercentage(kv.second,added_file_two_indexes[kv.first] );
-        if (percentage > 85) {
+        
+        if (percentage > PROCENTIDENTITY) {
             modifications.push_back(kv.first);
             keysToDeleteInMap.push_back(kv.first);
 
-        }
+        }}
     }
 
 
+    if(!keysToDeleteInMap.empty() ){
     // Usuwanie kluczy po iteracji mozna w sumie dac funkcje do usuwania
     for (auto key : keysToDeleteInMap) {
         deleted_file_one_indexes.erase(key);
     }
     for (auto key : keysToDeleteInMap) {
         added_file_two_indexes.erase(key);
-    }
+    }}
+   
 
     return  std::make_tuple(deleted_file_one_indexes, added_file_two_indexes, modifications);
 }
-
 
 
 
