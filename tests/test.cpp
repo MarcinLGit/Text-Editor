@@ -384,15 +384,15 @@ std::map<int, std::string> CreateMap(const std::initializer_list<std::pair<const
 }
 
 BOOST_AUTO_TEST_CASE(NoModifications) {
-    auto deleted = CreateMap({{1, "line1"}, {2, "line2"}});
-    auto added = CreateMap({{1, "line1"}, {2, "line2"}});
+    auto deleted = CreateMap({{1, "line dfvcgsdfv"}, {2, "line2"}});
+    auto added = CreateMap({{1, "line1"}, {2, "linefdvgsg"}});
     auto result = findModificationsWithLevenshtein(deleted, added);
     BOOST_CHECK_EQUAL(std::get<2>(result).size(),0);
 }
 
 BOOST_AUTO_TEST_CASE(SomeModifications) {
-    auto deleted = CreateMap({{1, "line1"}, {2, "line3"}});
-    auto added = CreateMap({{1, "line1"}, {2, "line4"}});
+    auto deleted = CreateMap({{1, "linedfvsg"}, {2, "line3"}});
+    auto added = CreateMap({{1, "linelvhui"}, {2, "line4"}});
     auto result = findModificationsWithLevenshtein(deleted, added);
     BOOST_CHECK_EQUAL(std::get<2>(result).size(), 1);
     BOOST_CHECK_EQUAL(std::get<2>(result)[0], 2);

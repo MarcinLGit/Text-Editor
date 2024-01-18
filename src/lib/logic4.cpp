@@ -223,7 +223,7 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<i
         else{
         double percentage = lcsPercentage(kv.second,added_file_two_indexes[kv.first] );
         
-        if (percentage > PROCENTIDENTITY && percentage<100) {
+        if (percentage > PROCENTIDENTITY ) {
             modifications.push_back(kv.first);
             keysToDeleteInMap.push_back(kv.first);
 
