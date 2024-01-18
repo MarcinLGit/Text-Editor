@@ -156,13 +156,6 @@ std::pair<std::vector<int>,std::vector<int>> elementsForDelete(
 
 
 
-
-void printIdenticalElements(const std::vector<std::pair<int, int>>& identicalElements) {
-    for (const auto& elem : identicalElements) {
-        std::cout << "Key 1: " << elem.first << ", Key 2: " << elem.second << std::endl;
-    }
-}
-
 // dla ogarniecia zamiany tutaj odrazu i usuwam  z tych tablic  i  tworze nowa
 
 
@@ -306,7 +299,6 @@ std::tuple<std::map<int, std::string>,
     swapedElement = std::get<2>(tuple);
 
 
-    std::cout<<"po wyszukiwaniu modyfikacji"<<std::endl;
     //po wyszukiwaniu zmian
     result = findModificationsWithLevenshtein(deleted_lines,added_lines);
 
@@ -316,9 +308,6 @@ std::tuple<std::map<int, std::string>,
     swapedElement=std::get<2>(tuple);
 
    
-    std::cout<<"swapy"<<std::endl;
-    printIdenticalElements(swapedElement);
-
     return std::make_tuple(added_lines,deleted_lines,swapedElement,modifications);
     
 
