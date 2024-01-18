@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <map>
 
-const int PROCENTIDENTITY = 70;
+const int PROCENTIDENTITY = 80;
 
 //porównuje i zwraca  hashmap z numerem linijki i zawartoscą plików
 std::map<int, std::pair<std::string, std::string>>

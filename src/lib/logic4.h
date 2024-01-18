@@ -13,6 +13,8 @@ std::map<int, std::string> findAddDel(const std::string& lcs, const std::map<int
 
 std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::string, std::string> convert_to_two_hashmaps_and_strings(const std::map<int, std::pair<std::string, std::string>>& differences); //stestowane
 
+template<typename K, typename V>
+std::vector<K> getKeys(const std::map<K, V>& m);
 
 std::pair<int,int> findIdenticalElement(std::map<int, std::string>& deleted_file_one_indexes,std::map<int, std::string>& added_file_two_indexes,int& deleted_file_one_indexe_key);//testy
 std::pair<std::vector<int>,std::vector<int>> elementsForDelete(std::map<int, std::string>& deleted_file_one_indexes, std::map<int, std::string>& added_file_two_indexes, int& startFrom, int& secondfileSwapIndex); //sprawdzono

@@ -391,16 +391,28 @@ BOOST_AUTO_TEST_CASE(NoModifications) {
 }
 
 BOOST_AUTO_TEST_CASE(SomeModifications) {
-    auto deleted = CreateMap({{1, "linedfvsg"}, {2, "line3"}});
-    auto added = CreateMap({{1, "linelvhui"}, {2, "line4"}});
+    auto deleted = CreateMap({{1, "linedfvsg"}, {2, "lineline3"}});
+    auto added = CreateMap({{1, "linelvhui"}, {2, "lineline4"}});
     auto result = findModificationsWithLevenshtein(deleted, added);
     BOOST_CHECK_EQUAL(std::get<2>(result).size(), 1);
     BOOST_CHECK_EQUAL(std::get<2>(result)[0], 2);
 }
 
 BOOST_AUTO_TEST_CASE(AllModifications) {
-    auto deleted = CreateMap({{1, "line1"}, {2, "line3"}});
-    auto added = CreateMap({{1, "line2"}, {2, "line4"}});
+    auto deleted = CreateMap({{1, "linijka1"}, {2, "linijka3"}});
+    auto added = CreateMap({{1, "linibka1"}, {2, "linijka4"}});
     auto result = findModificationsWithLevenshtein(deleted, added);
     BOOST_CHECK_EQUAL(std::get<2>(result).size(), 2);
+}
+
+
+
+BOOST_AUTO_TEST_CASE(NoDifferences) {
+    std::vector<std::string> file1 = {"line1", "line2"};
+    std::vector<std::string> file2 = {"line1", "line2"};
+    auto result = mainFunction(file1, file2);
+    BOOST_CHECK(std::get<0>(result).empty()); 
+    BOOST_CHECK(std::get<1>(result).empty()); 
+    BOOST_CHECK(std::get<2>(result).empty()); 
+    BOOST_CHECK(std::get<3>(result).empty()); 
 }
