@@ -6,7 +6,7 @@
 #include "ui_mainwindow.h"
 #include "QPushButton"
 #include "QHBoxLayout"
-#include "logic4.h"
+#include "lib/logic4.h"
 #include "QTextBlock"
 #include <stdio.h>
 #include <QDebug>

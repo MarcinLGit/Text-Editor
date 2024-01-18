@@ -1,6 +1,6 @@
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-
+find_package(OpenSSL REQUIRED)
 
 
 
@@ -12,12 +12,6 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui 
-        lcs.h
-        leven.h
-        leven.cpp
-        lcs.cpp
-        logic4.h
-        logic4.cpp
         ${TS_FILES}
 )
 
@@ -28,7 +22,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     )
 endif()
 
-target_link_libraries(ZPR PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(ZPR PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${LIBRARY_NAME})
 
 set_target_properties(ZPR PROPERTIES
     ${BUNDLE_ID_OPTION}
@@ -43,6 +37,8 @@ install(TARGETS ZPR
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+add_subdirectory(lib)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(ZPR)
