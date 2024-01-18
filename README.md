@@ -4,19 +4,9 @@
 
 # ZPR - Porównywanie plików tekstowych
 
-Stworzyliśmy szkielet narzędzia. Aplikacja ma możliwość wczytywania, modyfikowania i zapisywania plików.
-
-Proces budowania został zautomatyzowany. Dodaliśmy także automatyczną generacje dokumentacji - doxygen.
-
-Ponadto wykonaliśmy przykładowe testy jednostkowe.
-
-
 ## Podstawowa  funkconalnosć
 
-Program wczytuje pliki tekstowe, i oblicza hashe jak całego pliku, tak i pojedyńczej linijki, program wczytywuje plik binarnie, co pozwala mu   odnależć koniec linii
-
-Program może obliczyć hash całego pliku i porównać go z drugim,  jeśli pliki są identycznę to program będzie kończył się, Dodatkowo jest możliwoć obliczeia hashu linijka po linijce i zapisywania go do hashmap.Hashmap jako klucz przyjmuje hash linijki, a jako znaczenie vector, w którym  są zapisywane numery linijek, dodatkowo program liczy ilość linijek, co w przyszłosci pomoże na identyfikacje działania [modify,add, delete], Hashe każdego pliku liczą się jednocześnie dzięki wątkom
-
+Program umożliwia scalanie plików poprzez kolorowanie róznić między nimi.
 
 
 ## Podgląd aplikacji
@@ -39,6 +29,13 @@ make docs
 ```
 Dokumentacja po kompilacji znajduje się w folderze docs.
 
+Jeżeli chcemy obliczyć pokrycie testami musimy wykonać:
+```
+    mkdir build && cd build
+    cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON ..
+    cmake --build . --config Debug --target coverage
+```
+Dokumentacja lconv zostanie wygenerowana w build/coverage
 ### Uruchomienie
 Aplikacja - ```cd src && ./ZPR```
 
