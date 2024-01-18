@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <map>
 
-const int PROCENTIDENTITY = 85;
+const int PROCENTIDENTITY = 70;
 
 //porównuje i zwraca  hashmap z numerem linijki i zawartoscą plików
 std::map<int, std::pair<std::string, std::string>>
@@ -55,7 +55,7 @@ std::map<int, std::string> findAddDel(const std::string& lcs, const std::map<int
 }
 
 
-//funkcja dla threadsów
+//funkcja dla threadsów  nie bedzie testowana
 void threadFunction(const std::string& lcs, const std::map<int, std::string>& mapa,
                     std::map<int, std::string>& result) {
     result = findAddDel(lcs, mapa);
@@ -223,7 +223,7 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<i
         else{
         double percentage = lcsPercentage(kv.second,added_file_two_indexes[kv.first] );
         
-        if (percentage > PROCENTIDENTITY) {
+        if (percentage > PROCENTIDENTITY && percentage<100) {
             modifications.push_back(kv.first);
             keysToDeleteInMap.push_back(kv.first);
 

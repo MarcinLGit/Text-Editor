@@ -155,29 +155,6 @@ BOOST_AUTO_TEST_CASE(test_find_swaps_and_modify_maps) {
     // Add more checks as necessary
 }
 
-/*
-BOOST_AUTO_TEST_CASE(test_findModificationsWithLevenshtein) {
-    // Create test data with potential swaps
-    std::map<int, std::string> deleted = {{4, "kontrolna linijaeduywedgfuywgiwku"}, {5, "Line5"},{6, "Line6ekrjhgnkerjgcenrjcerkthytrehjuyh"}};
-    std::map<int, std::string> added = {{4, "Librvsrdfd4s5fdserne5"}, {5, "Line6"},{6, "kontrolna linijagythuijhgfrtyhujkh"}};
-    std::vector<int> modifications;
-
-    std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>> tuple;
-
-    // Identify swaps
-    tuple = findModificationsWithLevenshtein(deleted, added);
-
-    // Verify the result
-    BOOST_REQUIRE_EQUAL(std::get<2>(tuple).size(), 1);
-    BOOST_REQUIRE_EQUAL(std::get<2>(tuple)[0], 5);
-   
-    // Add more checks as necessary
-}
-*/ // troche trzeba poprawic  bo co
- // troche trzeba poprawic  bo psuje sie
-
-
-
 
 
 // posprawdza tutaj jeszcze
@@ -238,7 +215,6 @@ BOOST_AUTO_TEST_CASE(TestMultipleElementsMap) {
 
 
 
-// Предполагается, что функции findIdenticalElement и getKeys уже определены
 
 BOOST_AUTO_TEST_CASE(TestNoIdenticalElement) {
     std::map<int, std::string> deleted = {{1, "a"}, {2, "b"}};
@@ -246,7 +222,7 @@ BOOST_AUTO_TEST_CASE(TestNoIdenticalElement) {
     int key = 0;
 
     auto result = findIdenticalElement(deleted, added, key);
-    BOOST_CHECK(result == std::make_pair(0, 0)); // предполагаем, что возвращается пара (0, 0) в случае отсутствия совпадений
+    BOOST_CHECK(result == std::make_pair(0, 0));
 }
 
 BOOST_AUTO_TEST_CASE(TestIdenticalElementExists) {
@@ -255,7 +231,7 @@ BOOST_AUTO_TEST_CASE(TestIdenticalElementExists) {
     int key = 1;
 
     auto result = findIdenticalElement(deleted, added, key);
-    BOOST_CHECK(result == std::make_pair(1, 4)); // ожидается, что найденная пара - это (1, 4)
+    BOOST_CHECK(result == std::make_pair(1, 4)); 
 }
 
 BOOST_AUTO_TEST_CASE(TestMultipleIdenticalElements) {
@@ -264,7 +240,7 @@ BOOST_AUTO_TEST_CASE(TestMultipleIdenticalElements) {
     int key = 1;
 
     auto result = findIdenticalElement(deleted, added, key);
-    BOOST_CHECK(result == std::make_pair(1, 4)); // ожидается, что найденная первая пара - это (1, 4), а не (5, 4)
+    BOOST_CHECK(result == std::make_pair(1, 4)); 
 }
 
 BOOST_AUTO_TEST_CASE(NoElementsToDelete)
@@ -398,4 +374,33 @@ std::string x = "abcd";
 std::string y = "bc";
 double result = lcsPercentage(x, y);
 BOOST_CHECK_CLOSE(result, 50.0, 0.01); // 'bc' is 50% of 'abcd'
+}
+
+
+
+
+std::map<int, std::string> CreateMap(const std::initializer_list<std::pair<const int, std::string>>& list) {
+    return std::map<int, std::string>(list);
+}
+
+BOOST_AUTO_TEST_CASE(NoModifications) {
+    auto deleted = CreateMap({{1, "line1"}, {2, "line2"}});
+    auto added = CreateMap({{1, "line1"}, {2, "line2"}});
+    auto result = findModificationsWithLevenshtein(deleted, added);
+    BOOST_CHECK_EQUAL(std::get<2>(result).size(),0);
+}
+
+BOOST_AUTO_TEST_CASE(SomeModifications) {
+    auto deleted = CreateMap({{1, "line1"}, {2, "line3"}});
+    auto added = CreateMap({{1, "line1"}, {2, "line4"}});
+    auto result = findModificationsWithLevenshtein(deleted, added);
+    BOOST_CHECK_EQUAL(std::get<2>(result).size(), 1);
+    BOOST_CHECK_EQUAL(std::get<2>(result)[0], 2);
+}
+
+BOOST_AUTO_TEST_CASE(AllModifications) {
+    auto deleted = CreateMap({{1, "line1"}, {2, "line3"}});
+    auto added = CreateMap({{1, "line2"}, {2, "line4"}});
+    auto result = findModificationsWithLevenshtein(deleted, added);
+    BOOST_CHECK_EQUAL(std::get<2>(result).size(), 2);
 }

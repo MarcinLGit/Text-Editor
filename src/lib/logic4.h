@@ -7,10 +7,6 @@
 #include <tuple>
 
 // Function declarations
-bool fileExists(const std::string& filePath); //mam testy
-bool files_exist(const std::string& firstFilePath, const std::string& secondFilePath); // mam testy
-void read_file(const std::string& file_name, std::vector<std::string>& lines); // mam testy
-std::pair<std::vector<std::string>, std::vector<std::string>> read_files(const std::string& file1, const std::string& file2); // mam 
 
 std::map<int, std::pair<std::string, std::string>> compare(const std::vector<std::string>& vec1, const std::vector<std::string>& vec2);// sprawdzomo
 std::map<int, std::string> findAddDel(const std::string& lcs, const std::map<int, std::string>& mapa);//sprawdzono
