@@ -1,8 +1,0 @@
-linija 1
-linija 3
-linija 2
-linija 4
-kontrolna linija
-linija 5
-linija 7
-linija 6
