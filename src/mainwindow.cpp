@@ -67,12 +67,12 @@ MainWindow::~MainWindow(){
 /**
  * @brief Ustawienie koloru linii
  *
- * Funkcja odpowaiada za kolorwanie różnic w tekście.
+ * Funkcja odpowaiada za kolorowanie różnic w tekście.
  *
- * @param txtDocument Wskaźnik do document
- * @param cursorText Przekazanie kursora tekstu
+ * @param txtDocument Edytor do edycji
+ * @param cursorText Kursor do edycji tekstu
  * @param backgroundColor Kolor na jaki chcemy pomalować linię
- * @param lineNumber Numer lini do modyfikacji
+ * @param lineNumber Numer linii do modyfikacji
 */
 void MainWindow::setBlockColor(QTextDocument* txtDocument, QTextCursor& cursorText, QTextBlockFormat backgroundColor, int lineNumber){
     QTextBlock block = txtDocument->findBlockByLineNumber(lineNumber);
@@ -161,7 +161,8 @@ void MainWindow::moveSwappedLine(){
  * @brief Funkcja kolorująca różnice w plikach
  *
  * Funkcja przekazuje wczytane przez użytkownika nazwy plików i przekazuje je od funkcji mainFuntion().
- * Wyniki operacji są zapisywane i wykorzystywane w uruchamianiu funkcji colorAddedLines, colorDeletedLines, colorModifications i colorSwitchedLines.
+ * Wyniki operacji są zapisywane i wykorzystywane w uruchamianiu funkcji \ref MainWindow::colorAddedLines(), \ref MainWindow::colorDeletedLines(),
+ * \ref MainWindow::colorModifications() i \ref::colorSwitchedLines().
  */
 void MainWindow::colorLines(){
 
@@ -322,7 +323,7 @@ void MainWindow::newFileLeft(){
 }
 
 /**
- * @brief Funkcja wczytuje plik do lewego edytora teksy
+ * @brief Funkcja wczytuje plik do lewego edytora tekstu.
  *
  * Funkcja wczytuje pliki o maskymalnej wielkości 2 MB.
 */
@@ -389,7 +390,7 @@ void MainWindow::saveFileLeft(){
 /**
  * @brief Funkcja zapisuje tekst z lewego edytora do wskazanego pliku
  *
- * Funkcja otwiera nowe okienko które pozwala na zapis do danego pliku lub nowo pliku.
+ * Funkcja otwiera nowe okienko, które pozwala na zapis do danego pliku lub nowego pliku.
 */
 void MainWindow::saveFileAsLeft(){
     QString temp = QFileDialog::getSaveFileName(this,"Save File",QString());
@@ -448,7 +449,7 @@ void MainWindow::openFileRight(){
 /**
  * @brief Funkcja zapisuje tekst z prawego edytora do pliku
  *
- * Jeżeli przed zapisaniem nie wczytaliśmy żadnego pliku, funkcja wywołuje funkcję \ref MainWindow::saveRightAsLeft()
+ * Jeżeli przed zapisaniem nie wczytaliśmy żadnego pliku, funkcja wywołuje funkcję \ref MainWindow::saveFileAsRight()
 */
 void MainWindow::saveFileRight(){
     if(right_filename.isEmpty())

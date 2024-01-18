@@ -28,7 +28,6 @@ RECURSIVE               = YES
 GENERATE_HTML           = YES
 GENERATE_LATEX          = NO
 EXTRACT_PRIVATE 	= YES
-
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
