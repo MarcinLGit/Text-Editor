@@ -8,10 +8,6 @@
 
 Program umożliwia scalanie plików poprzez kolorowanie róznić między nimi.
 
-
-## Podgląd aplikacji
-![](readme_files/Podglad.png)
-
 ## Budowanie
 
 Do budowania potrzebny jest cmake, doxygen, boost, openssl, qt6.
