@@ -21,10 +21,10 @@ W przypadku checi wygenerowania dokumentacji pokrycia kodu dokumentacji.
 ### Kompilacja
 
 ```
-mkdir build && cd build
-cmake ..
-make
-make docs
+    mkdir build && cd build
+    cmake ..
+    make
+    make docs
 ```
 Dokumentacja po kompilacji znajduje się w folderze docs.
 
@@ -34,7 +34,7 @@ Jeżeli chcemy obliczyć pokrycie testami musimy wykonać:
     cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON ..
     cmake --build . --config Debug --target coverage
 ```
-Dokumentacja lconv zostanie wygenerowana w build/coverage
+Dokumentacja pokrycia lconv zostanie wygenerowana w build/coverage
 ### Uruchomienie
 Aplikacja - ```cd src && ./ZPR```
 
