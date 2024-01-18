@@ -13,7 +13,7 @@ Program umożliwia scalanie plików poprzez kolorowanie róznić między nimi.
 Do budowania potrzebny jest cmake, doxygen, boost, openssl, qt6.
 
 Mając świeżą instalację Ubuntu 22.04 musimy wykonać komendę: <br>
-    - sudo apt-get install qt6-base-dev libgl1-mesa-dev libboost-test-dev doxygen libssl-dev  g++ cmake
+    - sudo apt-get install qt6-base-dev libgl1-mesa-dev libboost-test-dev doxygen libssl-dev graphviz  g++ cmake 
 
 W przypadku chęci wygenerowania dokumentacji pokrycia kodu testami należy wykonąc dodatkowo: <br>
     - sudo apt-get install gcovr lcov
