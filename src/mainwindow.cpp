@@ -82,6 +82,10 @@ void MainWindow::setBlockColor(QTextDocument* txtDocument, QTextCursor& cursorTe
 
 }
 
+/**
+ * @brief MainWindow::deleteDeletedLine Usuwa linijkę na podstawie kliknięcia przycisku.
+ * Klikniety przycisk musi zawierać informację o linijce w tekscie
+ */
 void MainWindow::deleteDeletedLine(){
     QPushButton *button = (QPushButton *)sender();
     int lineNumber = button->text().toUtf8().toInt();
@@ -96,6 +100,15 @@ void MainWindow::deleteDeletedLine(){
     colorLines();
 }
 
+
+/**
+ * @brief MainWindow::moveSwapedLine Przeprowadzenie operacji przemieszczenia zamienionej linijki.
+ * @param leftDoc
+ * @param rightDoc
+ *
+ * Przeniesienie lini w lewym edytorze tekstu na pozycje jaką zajmuje ta linia w prawym edytorze.
+ * Przeniesienie odbywa się za pomcą informacji zawartej w przycisku.
+ */
 void MainWindow::moveSwapedLine(QTextDocument* leftDoc, QTextDocument* rightDoc){
     QPushButton *button = (QPushButton *)sender();
     const QStringList btnTxt = button->text().split(':');
@@ -148,7 +161,7 @@ void MainWindow::moveSwappedLine(){
  * @brief Funkcja kolorująca różnice w plikach
  *
  * Funkcja przekazuje wczytane przez użytkownika nazwy plików i przekazuje je od funkcji mainFuntion().
- * Wyniki operacji są zapisywane i wykorzystywane w uruchamianiu funkcji colorModifications i colorSwitchedLines.
+ * Wyniki operacji są zapisywane i wykorzystywane w uruchamianiu funkcji colorAddedLines, colorDeletedLines, colorModifications i colorSwitchedLines.
  */
 void MainWindow::colorLines(){
 
@@ -168,9 +181,6 @@ void MainWindow::colorLines(){
         rightVec.push_back(it.text().toUtf8().toStdString());
     }
 
-
-    //qInfo() << leftVec;
-    //qInfo() << rightVec;               TODELETE
     resultOfTxtCompare = mainFunction(leftVec, rightVec);
     // Resetowanie przycisków do łączenia tekstów
     ui->tableButtons->removeColumn(0);
