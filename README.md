@@ -19,6 +19,9 @@ Do budowania potrzebny jest cmake, doxygen, boost, openssl, qt6.
 Mając świeżą instalację Ubuntu 22.04 musimy wykonać komendę: <br>
     - sudo apt-get install qt6-base-dev libgl1-mesa-dev libboost-test-dev doxygen libssl-dev  g++ cmake
 
+W przypadku checi wygenerowania dokumentacji pokrycia kodu dokumentacji.
+    - sudo apt-get install gcovr lcov
+
 ### Kompilacja
 
 ```
