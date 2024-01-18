@@ -207,7 +207,7 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<s
 
 //pytanie czy wyszukiwac modyfikacje tylko w odpowiednich linijach czy razem z zamiana
 //zrobiono jak w meld
-std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>>  findModificationsWithLevenshtein(
+std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>>  FindModifications(
     std::map<int, std::string>& deleted_file_one_indexes,
     std::map<int, std::string>& added_file_two_indexes) {
 
@@ -299,7 +299,7 @@ std::tuple<std::map<int, std::string>,
 
 
     //po wyszukiwaniu zmian
-    result = findModificationsWithLevenshtein(deleted_lines,added_lines);
+    result = FindModifications (deleted_lines,added_lines);
 
     deleted_lines= std::get<0>(result);
     added_lines= std::get<1>(result);
