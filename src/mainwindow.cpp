@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(buttonCompare, &QPushButton::clicked, this, &MainWindow::colorLines);
 
     ui->tableButtons->horizontalHeader()->setDefaultSectionSize(25);
-    ui->tableButtons->verticalHeader()->setDefaultSectionSize(15);
+    ui->tableButtons->verticalHeader()->setDefaultSectionSize(18);
     // 30 20
     // synchronizacja skrolowania
     connect(ui->plainTextEdit->verticalScrollBar(), &QScrollBar::valueChanged,
@@ -108,29 +108,6 @@ void MainWindow::deleteDeletedLine(){
  *
  * Przeniesienie lini w lewym edytorze tekstu na pozycje jaką zajmuje ta linia w prawym edytorze.
  * Przeniesienie odbywa się za pomcą informacji zawartej w przycisku.
- */
-void MainWindow::moveSwapedLine(QTextDocument* leftDoc, QTextDocument* rightDoc){
-    QPushButton *button = (QPushButton *)sender();
-    const QStringList btnTxt = button->text().split(':');
-    const std::pair<int, int> lineNums = {btnTxt.at(0).toUtf8().toInt(), btnTxt.at(1).toUtf8().toInt()};
-
-    QTextBlock blockToSwapLeft = leftDoc->findBlockByLineNumber(lineNums.first);
-    QTextBlock blockToSwapRight = rightDoc->findBlockByLineNumber(lineNums.second);
-    QTextCursor cursorTextLeft(leftDoc);
-
-    cursorTextLeft.setPosition(blockToSwapLeft.position(), QTextCursor::MoveAnchor);
-    cursorTextLeft.setPosition(blockToSwapLeft.position()+blockToSwapLeft.length(), QTextCursor::KeepAnchor);
-    cursorTextLeft.removeSelectedText();
-
-    cursorTextLeft.setPosition(blockToSwapRight.position(), QTextCursor::MoveAnchor);
-    cursorTextLeft.setPosition(blockToSwapRight.position()+blockToSwapRight.length(), QTextCursor::KeepAnchor);
-    cursorTextLeft.insertBlock();
-    cursorTextLeft.selectedText() = blockToSwapRight.text();
-
-}
-
-/**
- * @brief MainWindow::moveSwapedLine Zamiana miejsca linijki wykrytej jako swapped.
  */
 void MainWindow::moveSwappedLine(){
     QTextDocument* leftDoc = ui->plainTextEdit->document();
@@ -227,7 +204,7 @@ void MainWindow::colorSwitchedLines(QTextCursor& cursorTextLeft, QTextCursor& cu
         buttonSwappingLines->setStyleSheet("background-color:rgb(246, 246, 120);");
         ui->tableButtons->setCellWidget(pair.first, 0, buttonSwappingLines);
         if(pair.first){
-            ui->tableButtons->setRowHeight(0, 25);
+            ui->tableButtons->setRowHeight(0, 23);
         }
         connect(buttonSwappingLines, SIGNAL(clicked()), this, SLOT(moveSwappedLine()));
     }
@@ -235,7 +212,7 @@ void MainWindow::colorSwitchedLines(QTextCursor& cursorTextLeft, QTextCursor& cu
 }
 
 /**
- * @brief MainWindow::colorAddedLines Kolorowanie dodanych lini
+ * @brief MainWindow::colorAddedLines Kolorowanie dodanych linii
  * @param cursorTextLeft
  * @param cursorTextRight
  */
@@ -251,7 +228,6 @@ void MainWindow::colorAddedLines(QTextCursor &cursorTextRight){
     addedLines = std::get<0>(resultOfTxtCompare);
     for (const auto& pair: addedLines) {
         setBlockColor(ui->plainTextEditRight->document(), cursorTextRight, backgroundColor, pair.first);
-        //qInfo() << "Added: \n" << pair.first << ":" << pair.second;
     }
 }
 
@@ -279,10 +255,9 @@ void MainWindow::colorDeletedLines(QTextCursor &cursorTextLeft, QTextCursor &cur
         buttonTableTest->setStyleSheet("background-color: red");
         ui->tableButtons->setCellWidget(pair.first, 0, buttonTableTest);
         if(pair.first){
-            ui->tableButtons->setRowHeight(0, 25);
+            ui->tableButtons->setRowHeight(0, 23);
         }
         connect(buttonTableTest, SIGNAL(clicked()), this, SLOT(deleteDeletedLine()));
-        //qInfo() << "Deleted: \n" << pair.first << ":" << pair.second << "\n";
     }
 }
 
