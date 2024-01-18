@@ -38,7 +38,6 @@ private slots:
 
     void colorLines();
     void deleteDeletedLine();
-    void moveSwapedLine(QTextDocument* leftDoc, QTextDocument* rightDoc);
     void moveSwappedLine();
     void newFileLeft();
     void openFileLeft();
