@@ -2,7 +2,6 @@
 #include <boost/test/included/unit_test.hpp>
 #include <fstream>
 #include "../src/lib/lcs.h" 
-#include "../src/lib/leven.h" 
 #include "../src/lib/logic4.h"
 #include <iostream>
 #include <utility>
