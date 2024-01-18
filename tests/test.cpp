@@ -4,7 +4,13 @@
 #include "../src/lib/lcs.h" 
 #include "../src/lib/leven.h" 
 #include "../src/lib/logic4.h"
+#include <iostream>
+#include <utility>
 
+template<typename T1, typename T2>
+std::ostream& operator<<(std::ostream& os, const std::pair<T1, T2>& p) {
+    return os << "(" << p.first << ", " << p.second << ")";
+}
 
 
 
@@ -407,12 +413,38 @@ BOOST_AUTO_TEST_CASE(AllModifications) {
 
 
 
-BOOST_AUTO_TEST_CASE(NoDifferences) {
+BOOST_AUTO_TEST_CASE(NoDifferencesInMain) {
     std::vector<std::string> file1 = {"line1", "line2"};
     std::vector<std::string> file2 = {"line1", "line2"};
     auto result = mainFunction(file1, file2);
     BOOST_CHECK(std::get<0>(result).empty()); 
     BOOST_CHECK(std::get<1>(result).empty()); 
     BOOST_CHECK(std::get<2>(result).empty()); 
+    BOOST_CHECK(std::get<3>(result).empty()); 
+}
+
+
+
+BOOST_AUTO_TEST_CASE(FileDifferencesTestInMain1) {
+    std::vector<std::string> file1 = {"linija 1", "linija 2", "kontrolna linija", "linija 3", "linija 4", "linija 6", ""};
+    std::vector<std::string> file2 = {"linija 1", "linija 2", "linija 4", "kontrolna linija", "linija 5", "linija 6", ""};
+    
+    auto result = mainFunction(file1, file2);
+
+    // Assuming mainFunction returns a tuple of maps and vectors as per your code structure
+    // Check the added lines
+    BOOST_CHECK_EQUAL(std::get<0>(result).size(), 1);
+    BOOST_CHECK_EQUAL(std::get<0>(result)[4], "linija 5");
+
+    // Check the deleted lines
+    BOOST_CHECK_EQUAL(std::get<1>(result).size(), 1);
+    BOOST_CHECK_EQUAL(std::get<1>(result)[3], "linija 3");
+
+    // Check the swapped elements
+    BOOST_CHECK_EQUAL(std::get<2>(result).size(), 1);
+    BOOST_CHECK_EQUAL(std::get<2>(result)[0].first, 4); 
+    BOOST_CHECK_EQUAL(std::get<2>(result)[0].second, 2); 
+
+    // Check for no modifications
     BOOST_CHECK(std::get<3>(result).empty()); 
 }
