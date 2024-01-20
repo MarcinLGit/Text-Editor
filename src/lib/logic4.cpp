@@ -1,3 +1,4 @@
+#include "leven.h"
 #include "lcs.h"
 #include <iostream>
 #include <fstream>
@@ -10,27 +11,34 @@
 #include <map>
 
 const int PROCENTIDENTITY = 80;
+// Helper function to remove end-of-line characters
+std::string removeLineEndings(std::string str) {
+    str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+    str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
+    return str;
+}
 
-//porównuje i zwraca  hashmap z numerem linijki i zawartoscą plików
 std::map<int, std::pair<std::string, std::string>>
 compare(const std::vector<std::string>& vec1, const std::vector<std::string>& vec2) {
-
     std::map<int, std::pair<std::string, std::string>> differences;
 
     size_t minSize = std::min(vec1.size(), vec2.size());
 
-    // porównanie vectorów
-    for (size_t i = 0; i < minSize; i++) {
-        if (vec1[i] != vec2[i]) {
-            differences[i] = {vec1[i], vec2[i]};
+    // Compare vectors after removing line endings
+    for (size_t i = 0; i < minSize; ++i) {
+        std::string str1 = removeLineEndings(vec1[i]);
+        std::string str2 = removeLineEndings(vec2[i]);
+
+        if (str1 != str2) {
+            differences[i] = {vec1[i], vec2[i]}; // Keeping the original strings in the map
         }
     }
 
-    // dodawanie reszty
-    for (size_t i = minSize; i < vec1.size(); i++) {
+    // Adding the rest
+    for (size_t i = minSize; i < vec1.size(); ++i) {
         differences[i] = {vec1[i], ""};
     }
-    for (size_t i = minSize; i < vec2.size(); i++) {
+    for (size_t i = minSize; i < vec2.size(); ++i) {
         differences[i] = {"", vec2[i]};
     }
 
@@ -207,7 +215,7 @@ std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<s
 
 //pytanie czy wyszukiwac modyfikacje tylko w odpowiednich linijach czy razem z zamiana
 //zrobiono jak w meld
-std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>>  FindModifications(
+std::tuple<std::map<int, std::string>, std::map<int, std::string>, std::vector<int>>  findModificationsWithLevenshtein(
     std::map<int, std::string>& deleted_file_one_indexes,
     std::map<int, std::string>& added_file_two_indexes) {
 
@@ -299,7 +307,7 @@ std::tuple<std::map<int, std::string>,
 
 
     //po wyszukiwaniu zmian
-    result = FindModifications (deleted_lines,added_lines);
+    result = findModificationsWithLevenshtein(deleted_lines,added_lines);
 
     deleted_lines= std::get<0>(result);
     added_lines= std::get<1>(result);
