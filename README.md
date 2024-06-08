@@ -2,7 +2,7 @@
 - Marcin Ł.
 - Aleksandr R.
 
-# ZPR - Porównywanie plików tekstowych
+# ZPR - Comparing text files
 
 ## Functionality
 
