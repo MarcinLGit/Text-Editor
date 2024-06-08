@@ -1,24 +1,24 @@
-# Autorzy
-- Marcin Łobacz
-- Aleksandr Rahacheuski
+# Authors
+- Marcin Ł.
+- Aleksandr R.
 
 # ZPR - Porównywanie plików tekstowych
 
-## Podstawowa  funkconalnosć
+## Functionality
 
-Program umożliwia scalanie plików poprzez kolorowanie róznić między nimi.
+Helps merging two txt files 
 
-## Budowanie
+## Building
 
-Do budowania potrzebny jest cmake, doxygen, boost, openssl, qt6.
+Requirements cmake, doxygen, boost, openssl, qt6.
 
-Mając świeżą instalację Ubuntu 22.04 musimy wykonać komendę: <br>
+If you have fresh install of Ubuntu 22.04 you can run command: <br>
     - sudo apt-get install qt6-base-dev libgl1-mesa-dev libboost-test-dev doxygen libssl-dev graphviz  g++ cmake 
 
-W przypadku chęci wygenerowania dokumentacji pokrycia kodu testami należy wykonąc dodatkowo: <br>
+If you want to generate a docs you need to run first command: <br>
     - sudo apt-get install gcovr lcov
 
-### Kompilacja
+### Compilation
 
 ```
     mkdir build && cd build
@@ -26,19 +26,19 @@ W przypadku chęci wygenerowania dokumentacji pokrycia kodu testami należy wyko
     make
     make docs
 ```
-Dokumentacja po kompilacji znajduje się w folderze docs.
+Documentation is stored in docs folder.
 
-Jeżeli chcemy obliczyć pokrycie testami musimy wykonać:
+If you want to calculate test coverage, we have to run:
 ```
     mkdir build && cd build
     cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON ..
     cmake --build . --config Debug --target coverage
 ```
-Dokumentacja pokrycia lconv zostanie wygenerowana w build/coverage
-### Uruchomienie
-Aplikacja - ```cd src && ./ZPR```
+Documentation will be generated in build/coverage
+### Launching
+Application - ```cd src && ./ZPR```
 
-Test jednostkowe - ```cd tests && ./MyTests```
+Unit tests - ```cd tests && ./MyTests```
 
 
 
